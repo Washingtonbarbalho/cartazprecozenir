@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Cartazes Zenir</title>
-    <!-- Importação das Fontes: Lato para os textos normais e Oswald para os preços -->
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <!-- Importação das Fontes: Lato (Garantias) e Oswald (Preços e Textos Principais) -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --sidebar-width: 350px;
@@ -86,7 +86,8 @@
             background: white;
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            font-family: 'Lato', sans-serif;
+            /* Fonte principal do cartaz agora é Oswald */
+            font-family: 'Oswald', sans-serif;
             overflow: hidden;
             background-size: 100% 100%;
             background-repeat: no-repeat;
@@ -103,20 +104,21 @@
             position: absolute;
             left: 1.5cm;
             right: 1cm;
-            line-height: 1.1;
+            line-height: 1.2;
             word-wrap: break-word;
         }
 
-        #field-produto { top: 5.6cm; font-size: 1cm; font-weight: 900; }
-        #field-ref-marca { top: 6.8cm; font-size: 0.7cm; }
-        #field-ref-marca span.marca { font-weight: 900; }
-        #field-caracteristicas { top: 7.7cm; font-size: 0.7cm; font-weight: 900; }
-        #field-codigo { top: 8.7cm; font-size: 0.7cm; font-weight: 400; }
+        /* 4 PRIMEIRAS LINHAS (Subiram 1cm) */
+        #field-produto { top: 4.6cm; font-size: 1cm; font-weight: 700; }
+        #field-ref-marca { top: 5.8cm; font-size: 0.7cm; font-weight: 400; }
+        #field-ref-marca span.marca { font-weight: 700; }
+        #field-caracteristicas { top: 6.7cm; font-size: 0.7cm; font-weight: 700; }
+        #field-codigo { top: 7.7cm; font-size: 0.7cm; font-weight: 400; }
 
-        /* BLOCO CENTRAL DE PREÇO */
+        /* BLOCO CENTRAL DE PREÇO (Subiu 2cm) */
         #price-block {
             position: absolute;
-            top: 10.5cm; 
+            top: 8.5cm; /* Era 10.5cm, agora 8.5cm */
             left: 0;
             width: 100%;
             height: 9.5cm; 
@@ -124,14 +126,13 @@
 
         #field-parcelas-container {
             position: absolute;
-            left: 1cm; /* Alterado de 1.5cm para 1cm */
-            bottom: 1.1cm; /* Ajustado para baixo para alinhar com a base do "65" */
+            left: 1cm; 
+            bottom: 1.1cm; 
             display: flex;
             flex-direction: column;
             line-height: 0.85;
             font-size: 2.2cm;
-            font-weight: 900;
-            font-family: 'Oswald', 'Impact', sans-serif; 
+            font-weight: 700;
             transform: scaleX(0.85); 
             transform-origin: left bottom;
             text-align: center;
@@ -144,7 +145,6 @@
             bottom: 0; 
             font-size: 9cm; 
             font-weight: 700;
-            font-family: 'Oswald', 'Impact', sans-serif;
             text-align: center;
             letter-spacing: -0.4cm; 
             transform: scaleX(0.70); 
@@ -152,23 +152,23 @@
             line-height: 0.8;
         }
 
-        /* TOTAIS (RODAPÉ) COM BORDAS E TAMANHOS IGUAIS */
+        /* TOTAIS (RODAPÉ) - Subiu 2cm e bordas mais próximas */
         #field-totais {
             position: absolute;
-            top: 22.2cm; /* Descido mais para baixo para não bater na vírgula */
+            top: 20.2cm; /* Era 22.2cm, agora 20.2cm */
             left: 1.5cm;
             right: 1cm;
-            border-top: 2px solid #000; /* Linha de cima em toda extensão */
-            border-bottom: 2px solid #000; /* Linha de baixo em toda extensão */
-            padding: 0.3cm 0; /* Dá um respiro entre a linha e o texto */
+            border-top: 2px solid #000; 
+            border-bottom: 2px solid #000; 
+            padding: 0.05cm 0; /* Espaçamento reduzido para colar nas letras */
             display: flex;
             align-items: center;
-            justify-content: center; /* Centraliza tudo no meio das linhas */
+            justify-content: center; 
         }
         
         #field-totais span {
-            font-size: 0.75cm; /* Mesmo tamanho exato para todos os textos da linha */
-            font-weight: 900;
+            font-size: 0.75cm; 
+            font-weight: 700;
         }
         
         #out-tot-praz { margin-right: 0.2cm; }
@@ -178,15 +178,15 @@
         
         .separator { 
             margin: 0 0.8cm; 
-            font-size: 0.9cm !important; /* Só o separador fica um pouco maior */
+            font-size: 0.9cm !important; 
             font-weight: 400 !important; 
         }
 
-        /* GARANTIAS */
+        /* GARANTIAS (Mantida na fonte Lato para melhor leitura do texto pequeno) */
         .garantia-item { 
             position: absolute; 
             font-size: 9pt; 
-            font-family: 'Lato', sans-serif; 
+            font-family: 'Lato', sans-serif; /* Fonte normal mantida aqui */
             font-weight: 400; 
         }
 
@@ -209,7 +209,7 @@
 <div id="control-panel" class="print-hide">
     <div class="header">
         <h1>Zenir Móveis</h1>
-        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Alinhamento Final</p>
+        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços V4 - Fonte Uniforme</p>
     </div>
 
     <!-- Informações Iniciais -->
@@ -277,7 +277,7 @@
             <div id="field-valor-parcela"></div>
         </div>
 
-        <!-- TOTAIS COM BORDAS -->
+        <!-- TOTAIS COM BORDAS COLADAS -->
         <div id="field-totais">
             <span id="out-tot-praz"></span>
             <span id="field-prazo-label">À PRAZO</span>
