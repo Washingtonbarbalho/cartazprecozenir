@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Cartazes Zenir</title>
-    <!-- Importação das Fontes: Lato (Garantias) e Oswald (Preços e Textos Principais) -->
+    <!-- Importação das Fontes: Lato (Garantias e taxas) e Oswald (Preços e Textos Principais) -->
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -52,7 +52,7 @@
 
         .form-group { margin-bottom: 12px; }
         label { display: block; font-size: 0.75rem; font-weight: bold; color: #555; margin-bottom: 4px; text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; }
+        input, textarea, select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;}
         
@@ -86,7 +86,6 @@
             background: white;
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            /* Fonte principal do cartaz agora é Oswald */
             font-family: 'Oswald', sans-serif;
             overflow: hidden;
             background-size: 100% 100%;
@@ -108,17 +107,17 @@
             word-wrap: break-word;
         }
 
-        /* 4 PRIMEIRAS LINHAS (Subiram 1cm) */
+        /* 4 PRIMEIRAS LINHAS */
         #field-produto { top: 4.6cm; font-size: 1cm; font-weight: 700; }
         #field-ref-marca { top: 5.8cm; font-size: 0.7cm; font-weight: 400; }
         #field-ref-marca span.marca { font-weight: 700; }
         #field-caracteristicas { top: 6.7cm; font-size: 0.7cm; font-weight: 700; }
         #field-codigo { top: 7.7cm; font-size: 0.7cm; font-weight: 400; }
 
-        /* BLOCO CENTRAL DE PREÇO (Subiu 2cm) */
+        /* BLOCO CENTRAL DE PREÇO */
         #price-block {
             position: absolute;
-            top: 8.5cm; /* Era 10.5cm, agora 8.5cm */
+            top: 8.5cm; 
             left: 0;
             width: 100%;
             height: 9.5cm; 
@@ -146,23 +145,24 @@
             font-size: 9cm; 
             font-weight: 700;
             text-align: center;
-            letter-spacing: -0.4cm; 
+            /* AJUSTE AQUI: letter-spacing alterado para aproximar os números o máximo possível sem colar */
+            letter-spacing: -0.55cm; 
             transform: scaleX(0.70); 
             transform-origin: center bottom;
             line-height: 0.8;
         }
 
-        /* TOTAIS (RODAPÉ) - Subiu 2cm e bordas mais próximas */
+        /* TOTAIS (RODAPÉ) */
         #field-totais {
             position: absolute;
-            top: 20.2cm; /* Era 22.2cm, agora 20.2cm */
+            top: 20.2cm; 
             left: 1.5cm;
             right: 1cm;
             border-top: 2px solid #000; 
             border-bottom: 2px solid #000; 
-            padding: 0.05cm 0; /* Espaçamento reduzido para colar nas letras */
+            padding: 0.1cm 0; 
             display: flex;
-            align-items: center;
+            align-items: baseline; 
             justify-content: center; 
         }
         
@@ -173,20 +173,41 @@
         
         #out-tot-praz { margin-right: 0.2cm; }
         #out-v-vis { margin-right: 0.2cm; }
-        #field-prazo-label { text-transform: uppercase; }
         #field-vista-label { text-transform: uppercase; }
         
+        /* Grupo de texto: PRAZO/CARTÃO + TAXAS */
+        #prazo-text-group {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center; 
+        }
+        #field-prazo-label { 
+            text-transform: uppercase; 
+            font-size: 0.75cm; 
+            font-weight: 700;
+            line-height: 1; 
+        }
+        #field-prazo-sublabel {
+            font-family: 'Lato', sans-serif;
+            font-size: 0.28cm !important; 
+            font-weight: 400 !important; 
+            text-transform: none;
+            margin-top: 0.1cm; 
+            white-space: nowrap;
+            line-height: 1;
+        }
+
         .separator { 
             margin: 0 0.8cm; 
             font-size: 0.9cm !important; 
             font-weight: 400 !important; 
         }
 
-        /* GARANTIAS (Mantida na fonte Lato para melhor leitura do texto pequeno) */
+        /* GARANTIAS */
         .garantia-item { 
             position: absolute; 
             font-size: 9pt; 
-            font-family: 'Lato', sans-serif; /* Fonte normal mantida aqui */
+            font-family: 'Lato', sans-serif; 
             font-weight: 400; 
         }
 
@@ -209,7 +230,7 @@
 <div id="control-panel" class="print-hide">
     <div class="header">
         <h1>Zenir Móveis</h1>
-        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços V4 - Fonte Uniforme</p>
+        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Final</p>
     </div>
 
     <!-- Informações Iniciais -->
@@ -222,7 +243,15 @@
     <div class="form-group"><label>Código</label><input type="text" id="in-codigo" oninput="update()"></div>
 
     <!-- Valores -->
-    <div class="section-title">Valores</div>
+    <div class="section-title">Valores e Condições</div>
+    <div class="form-group">
+        <label>Condição de Pagamento</label>
+        <select id="in-condicao" onchange="update()">
+            <option value="carne">Carnê</option>
+            <option value="cartao_fator">Cartão (com fator)</option>
+            <option value="cartao_sem_juros">Cartão (sem juros)</option>
+        </select>
+    </div>
     <div class="grid-2">
         <div class="form-group"><label>Parcelas</label><input type="text" id="in-parcelas" oninput="update()"></div>
         <div class="form-group"><label>Vl. Parcela (R$)</label><input type="text" id="in-v-parc" oninput="update()"></div>
@@ -277,10 +306,15 @@
             <div id="field-valor-parcela"></div>
         </div>
 
-        <!-- TOTAIS COM BORDAS COLADAS -->
+        <!-- TOTAIS COM BORDAS E ALINHAMENTO BASELINE -->
         <div id="field-totais">
             <span id="out-tot-praz"></span>
-            <span id="field-prazo-label">À PRAZO</span>
+            
+            <div id="prazo-text-group">
+                <span id="field-prazo-label">À PRAZO</span>
+                <span id="field-prazo-sublabel">6,9% a.m. e 122,71% a.a.</span>
+            </div>
+
             <span class="separator">|</span>
             <span id="out-v-vis"></span>
             <span id="field-vista-label">À VISTA</span>
@@ -322,6 +356,25 @@
         const totalV = document.getElementById('in-v-vis').value;
         document.getElementById('out-v-vis').innerText = totalV ? 'R$ ' + totalV : '';
 
+        // Atualização Dinâmica da Condição
+        const condicao = document.getElementById('in-condicao').value;
+        const prazoLabel = document.getElementById('field-prazo-label');
+        const prazoSubLabel = document.getElementById('field-prazo-sublabel');
+
+        if (condicao === 'carne') {
+            prazoLabel.innerText = 'À PRAZO';
+            prazoSubLabel.innerText = '6,9% a.m. e 122,71% a.a.';
+            prazoSubLabel.style.display = 'block';
+        } else if (condicao === 'cartao_fator') {
+            prazoLabel.innerText = 'NO CARTÃO';
+            prazoSubLabel.innerText = '2,92% a.m. e 41,25% a.a.';
+            prazoSubLabel.style.display = 'block';
+        } else if (condicao === 'cartao_sem_juros') {
+            prazoLabel.innerText = 'NO CARTÃO';
+            prazoSubLabel.innerText = 'sem juros';
+            prazoSubLabel.style.display = 'block';
+        }
+
         document.getElementById('g1-q').innerText = document.getElementById('in-g1-q').value;
         document.getElementById('g1-v').innerText = document.getElementById('in-g1-v').value;
         document.getElementById('g1-t').innerText = document.getElementById('in-g1-t').value;
@@ -348,6 +401,7 @@
         document.getElementById('in-marca').value = "Demobile";
         document.getElementById('in-carac').value = "Com Armário | MDP | 1 Gaveta | 1 Porta";
         document.getElementById('in-codigo').value = "47661";
+        document.getElementById('in-condicao').value = "carne";
         document.getElementById('in-parcelas').value = "12";
         document.getElementById('in-v-parc').value = "65,90";
         document.getElementById('in-tot-praz').value = "790,80";
