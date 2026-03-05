@@ -145,7 +145,6 @@
             font-size: 9cm; 
             font-weight: 700;
             text-align: center;
-            /* AJUSTE AQUI: letter-spacing alterado para aproximar os números o máximo possível sem colar */
             letter-spacing: -0.55cm; 
             transform: scaleX(0.70); 
             transform-origin: center bottom;
@@ -203,12 +202,19 @@
             font-weight: 400 !important; 
         }
 
-        /* GARANTIAS */
+        /* GARANTIAS - BASE (Padrão) */
         .garantia-item { 
             position: absolute; 
             font-size: 9pt; 
             font-family: 'Lato', sans-serif; 
             font-weight: 400; 
+            /* A transição suave caso mude o tipo de cartaz no preview */
+            transition: bottom 0.3s ease, margin-bottom 0.3s ease;
+        }
+
+        /* MODIFICADOR: GARANTIAS - A4 PROMOCIONAL (+1cm pra cima) */
+        .page-a4.promocional .garantia-item {
+            margin-bottom: 1cm; 
         }
 
         /* REGRAS DE IMPRESSÃO */
@@ -230,8 +236,19 @@
 <div id="control-panel" class="print-hide">
     <div class="header">
         <h1>Zenir Móveis</h1>
-        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Final</p>
+        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Final v9</p>
     </div>
+
+    <!-- Tipo de Cartaz -->
+    <div class="form-group">
+        <label>Tipo de Cartaz</label>
+        <select id="in-tipo-cartaz" onchange="toggleCartazTipo()">
+            <option value="padrao">A4 Padrão</option>
+            <option value="promocional">A4 Promocional (Garantias + Altas)</option>
+        </select>
+    </div>
+
+    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
 
     <!-- Informações Iniciais -->
     <div class="form-group"><label>Produto</label><input type="text" id="in-produto" oninput="update()"></div>
@@ -395,6 +412,17 @@
         document.getElementById('cartaz').classList.toggle('show-template');
     }
 
+    function toggleCartazTipo() {
+        const tipo = document.getElementById('in-tipo-cartaz').value;
+        const cartaz = document.getElementById('cartaz');
+        
+        if (tipo === 'promocional') {
+            cartaz.classList.add('promocional');
+        } else {
+            cartaz.classList.remove('promocional');
+        }
+    }
+
     window.onload = () => {
         document.getElementById('in-produto').value = "Mesa Computador";
         document.getElementById('in-ref').value = "Morada";
@@ -412,6 +440,7 @@
         document.getElementById('in-g1-t').value = "73,34";
 
         update();
+        toggleCartazTipo(); // Aplica a classe inicial se necessário
     }
 </script>
 
