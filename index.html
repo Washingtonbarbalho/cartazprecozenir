@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cartazes Zenir</title>
+    <!-- Importação das Fontes: Lato para os textos normais e Oswald para os preços -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 350px;
+            --bg-color: #f0f2f5;
+            --zenir-red: #e30613;
+            --zenir-blue: #003399;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- PAINEL DE CONTROLE --- */
+        #control-panel {
+            width: var(--sidebar-width);
+            background: white;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            overflow-y: auto;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .header h1 { font-size: 1.2rem; color: var(--zenir-blue); }
+
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.75rem; font-weight: bold; color: #555; margin-bottom: 4px; text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;}
+        
+        .section-title {
+            background: #f8f9fa;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+            border-left: 4px solid var(--zenir-blue);
+        }
+
+        .btn-print { display: block; width: 100%; padding: 12px; background: var(--zenir-blue); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1rem; }
+        .btn-print:hover { background: #00267a; }
+        
+        .btn-guide { display: block; width: 100%; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 0.9rem; }
+
+        /* --- ÁREA DO CARTAZ (PREVIEW) --- */
+        #preview-area {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+            overflow-x: auto;
+        }
+
+        .page-a4 {
+            width: 21cm;
+            height: 29.7cm;
+            background: white;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            font-family: 'Lato', sans-serif;
+            overflow: hidden;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            color: #111;
+        }
+
+        .show-template {
+            background-image: url('https://raw.githubusercontent.com/user-attachments/assets/943dacb8-00cb-4ea6-9b28-62d563da64c5');
+            opacity: 0.9;
+        }
+
+        /* POSICIONAMENTO DOS CAMPOS GERAIS */
+        .field {
+            position: absolute;
+            left: 1.5cm;
+            right: 1cm;
+            line-height: 1.1;
+            word-wrap: break-word;
+        }
+
+        #field-produto { top: 5.6cm; font-size: 1cm; font-weight: 900; }
+        #field-ref-marca { top: 6.8cm; font-size: 0.7cm; }
+        #field-ref-marca span.marca { font-weight: 900; }
+        #field-caracteristicas { top: 7.7cm; font-size: 0.7cm; font-weight: 900; }
+        #field-codigo { top: 8.7cm; font-size: 0.7cm; font-weight: 400; }
+
+        /* BLOCO CENTRAL DE PREÇO */
+        #price-block {
+            position: absolute;
+            top: 10.5cm; 
+            left: 0;
+            width: 100%;
+            height: 9.5cm; 
+        }
+
+        #field-parcelas-container {
+            position: absolute;
+            left: 1cm; /* Alterado de 1.5cm para 1cm */
+            bottom: 1.1cm; /* Ajustado para baixo para alinhar com a base do "65" */
+            display: flex;
+            flex-direction: column;
+            line-height: 0.85;
+            font-size: 2.2cm;
+            font-weight: 900;
+            font-family: 'Oswald', 'Impact', sans-serif; 
+            transform: scaleX(0.85); 
+            transform-origin: left bottom;
+            text-align: center;
+        }
+
+        #field-valor-parcela {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            bottom: 0; 
+            font-size: 9cm; 
+            font-weight: 700;
+            font-family: 'Oswald', 'Impact', sans-serif;
+            text-align: center;
+            letter-spacing: -0.4cm; 
+            transform: scaleX(0.70); 
+            transform-origin: center bottom;
+            line-height: 0.8;
+        }
+
+        /* TOTAIS (RODAPÉ) COM BORDAS E TAMANHOS IGUAIS */
+        #field-totais {
+            position: absolute;
+            top: 22.2cm; /* Descido mais para baixo para não bater na vírgula */
+            left: 1.5cm;
+            right: 1cm;
+            border-top: 2px solid #000; /* Linha de cima em toda extensão */
+            border-bottom: 2px solid #000; /* Linha de baixo em toda extensão */
+            padding: 0.3cm 0; /* Dá um respiro entre a linha e o texto */
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centraliza tudo no meio das linhas */
+        }
+        
+        #field-totais span {
+            font-size: 0.75cm; /* Mesmo tamanho exato para todos os textos da linha */
+            font-weight: 900;
+        }
+        
+        #out-tot-praz { margin-right: 0.2cm; }
+        #out-v-vis { margin-right: 0.2cm; }
+        #field-prazo-label { text-transform: uppercase; }
+        #field-vista-label { text-transform: uppercase; }
+        
+        .separator { 
+            margin: 0 0.8cm; 
+            font-size: 0.9cm !important; /* Só o separador fica um pouco maior */
+            font-weight: 400 !important; 
+        }
+
+        /* GARANTIAS */
+        .garantia-item { 
+            position: absolute; 
+            font-size: 9pt; 
+            font-family: 'Lato', sans-serif; 
+            font-weight: 400; 
+        }
+
+        /* REGRAS DE IMPRESSÃO */
+        @media print {
+            body { background: white; margin: 0; padding: 0; }
+            #control-panel { display: none; }
+            #preview-area { margin: 0; padding: 0; display: block; }
+            .page-a4 {
+                box-shadow: none;
+                margin: 0;
+                background-image: none !important;
+            }
+            @page { size: A4; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="control-panel" class="print-hide">
+    <div class="header">
+        <h1>Zenir Móveis</h1>
+        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Alinhamento Final</p>
+    </div>
+
+    <!-- Informações Iniciais -->
+    <div class="form-group"><label>Produto</label><input type="text" id="in-produto" oninput="update()"></div>
+    <div class="grid-2">
+        <div class="form-group"><label>Referência</label><input type="text" id="in-ref" oninput="update()"></div>
+        <div class="form-group"><label>Marca (Negrito)</label><input type="text" id="in-marca" oninput="update()"></div>
+    </div>
+    <div class="form-group"><label>Características</label><textarea id="in-carac" rows="2" oninput="update()"></textarea></div>
+    <div class="form-group"><label>Código</label><input type="text" id="in-codigo" oninput="update()"></div>
+
+    <!-- Valores -->
+    <div class="section-title">Valores</div>
+    <div class="grid-2">
+        <div class="form-group"><label>Parcelas</label><input type="text" id="in-parcelas" oninput="update()"></div>
+        <div class="form-group"><label>Vl. Parcela (R$)</label><input type="text" id="in-v-parc" oninput="update()"></div>
+    </div>
+    <div class="grid-2">
+        <div class="form-group"><label>Total a Prazo</label><input type="text" id="in-tot-praz" oninput="update()"></div>
+        <div class="form-group"><label>Vl. à Vista</label><input type="text" id="in-v-vis" oninput="update()"></div>
+    </div>
+
+    <!-- Garantias -->
+    <div class="section-title">Garantias Estendidas</div>
+    
+    <label>+ 1 ANO</label>
+    <div class="grid-3">
+        <input type="text" id="in-g1-q" placeholder="Qtd" oninput="update()">
+        <input type="text" id="in-g1-v" placeholder="Parcela" oninput="update()">
+        <input type="text" id="in-g1-t" placeholder="Total/Vista" oninput="update()">
+    </div>
+
+    <label>+ 2 ANOS</label>
+    <div class="grid-3">
+        <input type="text" id="in-g2-q" placeholder="Qtd" oninput="update()">
+        <input type="text" id="in-g2-v" placeholder="Parcela" oninput="update()">
+        <input type="text" id="in-g2-t" placeholder="Total/Vista" oninput="update()">
+    </div>
+
+    <label>+ 3 ANOS</label>
+    <div class="grid-3">
+        <input type="text" id="in-g3-q" placeholder="Qtd" oninput="update()">
+        <input type="text" id="in-g3-v" placeholder="Parcela" oninput="update()">
+        <input type="text" id="in-g3-t" placeholder="Total/Vista" oninput="update()">
+    </div>
+
+    <button class="btn-print" onclick="window.print()">IMPRIMIR CARTAZ</button>
+    <button class="btn-guide" onclick="toggleGuide()">MOSTRAR/OCULTAR GUIA</button>
+</div>
+
+<div id="preview-area">
+    <div id="cartaz" class="page-a4">
+        <!-- Textos Superiores -->
+        <div id="field-produto" class="field"></div>
+        <div id="field-ref-marca" class="field"><span id="out-ref"></span> <span id="out-marca" class="marca"></span></div>
+        <div id="field-caracteristicas" class="field"></div>
+        <div id="field-codigo" class="field"></div>
+
+        <!-- BLOCO CENTRAL -->
+        <div id="price-block">
+            <div id="field-parcelas-container">
+                <span id="out-parcelas"></span>
+                <span>R$</span>
+            </div>
+            <div id="field-valor-parcela"></div>
+        </div>
+
+        <!-- TOTAIS COM BORDAS -->
+        <div id="field-totais">
+            <span id="out-tot-praz"></span>
+            <span id="field-prazo-label">À PRAZO</span>
+            <span class="separator">|</span>
+            <span id="out-v-vis"></span>
+            <span id="field-vista-label">À VISTA</span>
+        </div>
+
+        <!-- GARANTIAS -->
+        <!-- +1 ANO -->
+        <div class="garantia-item" id="g1-q" style="bottom: 3.5cm; left: 6cm;"></div>
+        <div class="garantia-item" id="g1-v" style="bottom: 3.5cm; left: 8cm;"></div>
+        <div class="garantia-item" id="g1-t" style="bottom: 3.0cm; left: 8cm;"></div>
+        <div class="garantia-item" id="g1-vis" style="bottom: 2.5cm; left: 8cm;"></div>
+        <!-- +2 ANOS -->
+        <div class="garantia-item" id="g2-q" style="bottom: 3.5cm; left: 11cm;"></div>
+        <div class="garantia-item" id="g2-v" style="bottom: 3.5cm; left: 13cm;"></div>
+        <div class="garantia-item" id="g2-t" style="bottom: 3.0cm; left: 13cm;"></div>
+        <div class="garantia-item" id="g2-vis" style="bottom: 2.5cm; left: 13cm;"></div>
+        <!-- +3 ANOS -->
+        <div class="garantia-item" id="g3-q" style="bottom: 3.5cm; left: 16cm;"></div>
+        <div class="garantia-item" id="g3-v" style="bottom: 3.5cm; left: 18cm;"></div>
+        <div class="garantia-item" id="g3-t" style="bottom: 3.0cm; left: 18cm;"></div>
+        <div class="garantia-item" id="g3-vis" style="bottom: 2.5cm; left: 18cm;"></div>
+    </div>
+</div>
+
+<script>
+    function update() {
+        document.getElementById('field-produto').innerText = document.getElementById('in-produto').value;
+        document.getElementById('out-ref').innerText = document.getElementById('in-ref').value;
+        document.getElementById('out-marca').innerText = document.getElementById('in-marca').value;
+        document.getElementById('field-caracteristicas').innerText = document.getElementById('in-carac').value;
+        document.getElementById('field-codigo').innerText = document.getElementById('in-codigo').value;
+        
+        document.getElementById('out-parcelas').innerText = document.getElementById('in-parcelas').value ? document.getElementById('in-parcelas').value + 'x' : '';
+        document.getElementById('field-valor-parcela').innerText = document.getElementById('in-v-parc').value;
+        
+        const totalP = document.getElementById('in-tot-praz').value;
+        document.getElementById('out-tot-praz').innerText = totalP ? '= R$ ' + totalP : '';
+        
+        const totalV = document.getElementById('in-v-vis').value;
+        document.getElementById('out-v-vis').innerText = totalV ? 'R$ ' + totalV : '';
+
+        document.getElementById('g1-q').innerText = document.getElementById('in-g1-q').value;
+        document.getElementById('g1-v').innerText = document.getElementById('in-g1-v').value;
+        document.getElementById('g1-t').innerText = document.getElementById('in-g1-t').value;
+        document.getElementById('g1-vis').innerText = document.getElementById('in-g1-t').value; 
+
+        document.getElementById('g2-q').innerText = document.getElementById('in-g2-q').value;
+        document.getElementById('g2-v').innerText = document.getElementById('in-g2-v').value;
+        document.getElementById('g2-t').innerText = document.getElementById('in-g2-t').value;
+        document.getElementById('g2-vis').innerText = document.getElementById('in-g2-t').value;
+
+        document.getElementById('g3-q').innerText = document.getElementById('in-g3-q').value;
+        document.getElementById('g3-v').innerText = document.getElementById('in-g3-v').value;
+        document.getElementById('g3-t').innerText = document.getElementById('in-g3-t').value;
+        document.getElementById('g3-vis').innerText = document.getElementById('in-g3-t').value;
+    }
+
+    function toggleGuide() {
+        document.getElementById('cartaz').classList.toggle('show-template');
+    }
+
+    window.onload = () => {
+        document.getElementById('in-produto').value = "Mesa Computador";
+        document.getElementById('in-ref').value = "Morada";
+        document.getElementById('in-marca').value = "Demobile";
+        document.getElementById('in-carac').value = "Com Armário | MDP | 1 Gaveta | 1 Porta";
+        document.getElementById('in-codigo').value = "47661";
+        document.getElementById('in-parcelas').value = "12";
+        document.getElementById('in-v-parc').value = "65,90";
+        document.getElementById('in-tot-praz').value = "790,80";
+        document.getElementById('in-v-vis').value = "529,00";
+        
+        document.getElementById('in-g1-q').value = "3";
+        document.getElementById('in-g1-v').value = "24,45";
+        document.getElementById('in-g1-t').value = "73,34";
+
+        update();
+    }
+</script>
+
+</body>
+</html>
+
