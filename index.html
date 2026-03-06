@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Cartazes Zenir</title>
+    <!-- Importação das Fontes -->
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,10 +12,12 @@
             --bg-color: #f0f2f5;
             --zenir-red: #e30613;
             --zenir-blue: #003399;
-            --val-font-size: 9cm;
-            --val-letter-spacing: -0.55cm;
-            --val-x: 0cm;
-            --val-y: 0cm;
+            
+            /* Variáveis para ajustes finos do valor da parcela */
+            --val-font-size: 9;
+            --val-letter-spacing: -0.55;
+            --val-x: 0;
+            --val-y: 0;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,109 +82,131 @@
             overflow-x: auto;
         }
 
-        .page-a4 {
-            width: 21cm; height: 29.7cm; background: white; position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2); font-family: 'Oswald', sans-serif;
-            overflow: hidden; background-size: 100% 100%; background-repeat: no-repeat; color: #111;
+        /* CONTROLE DE ESCALA PROPORCIONAL (A4, A5, A6) */
+        .page {
+            --scale: 1; /* Padrão A4 = Escala de 100% */
+            width: calc(21cm * var(--scale)); 
+            height: calc(29.7cm * var(--scale)); 
+            background: white; 
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2); 
+            font-family: 'Oswald', sans-serif;
+            overflow: hidden; 
+            background-size: 100% 100%; 
+            background-repeat: no-repeat; 
+            color: #111;
         }
+        
+        /* Modificadores de Tamanho de Papel */
+        .page.size-A5 { --scale: 0.7071; } /* 70.7% do A4 (A5 exato) */
+        .page.size-A6 { --scale: 0.5000; } /* 50.0% do A4 (A6 exato) */
 
         .show-template {
             background-image: url('https://raw.githubusercontent.com/user-attachments/assets/943dacb8-00cb-4ea6-9b28-62d563da64c5');
             opacity: 0.9;
         }
 
-        /* CAMPOS GERAIS */
-        .field { position: absolute; left: 1.5cm; right: 1cm; line-height: 1.2; word-wrap: break-word; }
-        #field-produto { top: 4.6cm; font-size: 1cm; font-weight: 700; }
-        #field-ref-marca { top: 5.8cm; font-size: 0.7cm; font-weight: 400; }
+        /* * TODOS OS VALORES AGORA SÃO MULTIPLICADOS PELA VAR(--SCALE) 
+         * Isso garante que encolha ou estique de forma milimetricamente perfeita!
+         */
+
+        .field { position: absolute; left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); line-height: 1.2; word-wrap: break-word; }
+        
+        #field-produto { top: calc(4.6cm * var(--scale)); font-size: calc(1cm * var(--scale)); font-weight: 700; }
+        #field-ref-marca { top: calc(5.8cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 400; }
         #field-ref-marca span.marca { font-weight: 700; }
-        #field-caracteristicas { top: 6.7cm; font-size: 0.7cm; font-weight: 700; }
-        #field-codigo { top: 7.7cm; font-size: 0.7cm; font-weight: 400; }
+        #field-caracteristicas { top: calc(6.7cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 700; }
+        #field-codigo { top: calc(7.7cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 400; }
 
         /* BLOCO DE PREÇO */
-        #price-block { position: absolute; top: 8.5cm; left: 0; width: 100%; height: 9.5cm; }
+        #price-block { position: absolute; top: calc(8.5cm * var(--scale)); left: 0; width: 100%; height: calc(9.5cm * var(--scale)); }
+        
         #field-parcelas-container {
-            position: absolute; left: 1cm; bottom: 1.1cm; display: flex; flex-direction: column;
-            line-height: 0.85; font-size: 2.2cm; font-weight: 700; transform: scaleX(0.85); transform-origin: left bottom; text-align: center;
+            position: absolute; left: calc(1cm * var(--scale)); bottom: calc(1.1cm * var(--scale)); display: flex; flex-direction: column;
+            line-height: 0.85; font-size: calc(2.2cm * var(--scale)); font-weight: 700; transform: scaleX(0.85); transform-origin: left bottom; text-align: center;
         }
+        
         #field-valor-parcela {
             position: absolute; left: 0; width: 100%; bottom: 0; text-align: center;
             transform: scaleX(0.70); transform-origin: center bottom; line-height: 0.8; font-weight: 700;
-            font-size: var(--val-font-size); letter-spacing: var(--val-letter-spacing); margin-left: var(--val-x); margin-bottom: var(--val-y);
+            font-size: calc(var(--val-font-size) * 1cm * var(--scale)); 
+            letter-spacing: calc(var(--val-letter-spacing) * 1cm * var(--scale)); 
+            margin-left: calc(var(--val-x) * 1cm * var(--scale)); 
+            margin-bottom: calc(var(--val-y) * 1cm * var(--scale));
         }
 
         /* TOTAIS (RODAPÉ) */
         #field-totais {
-            position: absolute; top: 20.2cm; left: 1.5cm; right: 1cm;
-            border-top: 2px solid #000; border-bottom: 2px solid #000; 
-            padding: 0.1cm 0; display: flex; align-items: baseline; justify-content: center; 
+            position: absolute; top: calc(20.2cm * var(--scale)); left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale));
+            border-top: calc(2px * var(--scale)) solid #000; border-bottom: calc(2px * var(--scale)) solid #000; 
+            padding: calc(0.1cm * var(--scale)) 0; display: flex; align-items: baseline; justify-content: center; 
         }
-        #field-totais span { font-size: 0.75cm; font-weight: 700; }
-        #out-tot-praz { margin-right: 0.2cm; }
-        #out-v-vis { margin-right: 0.2cm; }
+        #field-totais span { font-size: calc(0.75cm * var(--scale)); font-weight: 700; }
+        #out-tot-praz { margin-right: calc(0.2cm * var(--scale)); }
+        #out-v-vis { margin-right: calc(0.2cm * var(--scale)); }
         #field-vista-label { text-transform: uppercase; transition: font-size 0.2s; }
         
         #prazo-text-group { display: inline-flex; flex-direction: column; align-items: center; }
-        #field-prazo-label { text-transform: uppercase; font-size: 0.75cm; font-weight: 700; line-height: 1; }
-        #field-prazo-sublabel { font-family: 'Lato', sans-serif; font-size: 0.28cm !important; font-weight: 400 !important; text-transform: none; margin-top: 0.1cm; white-space: nowrap; line-height: 1; }
-        .separator { margin: 0 0.8cm; font-size: 0.9cm !important; font-weight: 400 !important; }
+        #field-prazo-label { text-transform: uppercase; font-size: calc(0.75cm * var(--scale)); font-weight: 700; line-height: 1; }
+        #field-prazo-sublabel { font-family: 'Lato', sans-serif; font-size: calc(0.28cm * var(--scale)) !important; font-weight: 400 !important; text-transform: none; margin-top: calc(0.1cm * var(--scale)); white-space: nowrap; line-height: 1; }
+        .separator { margin: 0 calc(0.8cm * var(--scale)); font-size: calc(0.9cm * var(--scale)) !important; font-weight: 400 !important; }
 
-        /* GARANTIAS */
-        .garantia-item { position: absolute; font-size: 9pt; font-family: 'Lato', sans-serif; font-weight: 400; transition: bottom 0.3s ease, margin-bottom 0.3s ease; }
+        /* GARANTIAS PROPORCIONAIS */
+        .garantia-item { 
+            position: absolute; 
+            font-family: 'Lato', sans-serif; font-weight: 400; 
+            transition: bottom 0.3s ease, margin-bottom 0.3s ease;
+            font-size: calc(9pt * var(--scale));
+            /* Utiliza variáveis para ler as posições baseadas em A4 e escalá-las automaticamente */
+            bottom: calc(var(--b) * 1cm * var(--scale)); 
+            left: calc(var(--l) * 1cm * var(--scale));
+        }
 
         /* --- MODIFICADORES DE TIPO DE CARTAZ --- */
-        .page-a4.promocional .garantia-item { margin-bottom: 0.85cm; }
+        .page.promocional .garantia-item { margin-bottom: calc(0.85cm * var(--scale)); }
 
         /* À VISTA: Esconde parcelas, linhas e alinha ao centro perfeito da página */
-        .page-a4.avista #field-parcelas-container { display: none !important; }
-        .page-a4.avista #field-totais { 
+        .page.avista #field-parcelas-container { display: none !important; }
+        .page.avista #field-totais { 
             border: none !important; 
-            left: 0 !important; /* Centraliza relativo à página inteira */
+            left: 0 !important; 
             right: 0 !important; 
             width: 100% !important; 
         }
-        .page-a4.avista #out-tot-praz,
-        .page-a4.avista #prazo-text-group,
-        .page-a4.avista .separator,
-        .page-a4.avista #out-v-vis { display: none !important; }
-        .page-a4.avista #field-vista-label { font-size: 1.35cm !important; }
+        .page.avista #out-tot-praz,
+        .page.avista #prazo-text-group,
+        .page.avista .separator,
+        .page.avista #out-v-vis { display: none !important; }
+        
+        .page.avista #field-vista-label { font-size: calc(1.35cm * var(--scale)) !important; }
 
 
-        /* 🔴 MOTOR DE IMPRESSÃO BLINDADO (RESOLVE O ERRO DA TELA BRANCA NO CELULAR) 🔴 */
+        /* 🔴 MOTOR DE IMPRESSÃO BLINDADO E ESCALONÁVEL 🔴 */
         @media print {
-            @page { size: A4; margin: 0; }
-            
-            /* Oculta o corpo inteiro do site para evitar conflitos de margem/rolagem */
+            @page { margin: 0; }
             body * { visibility: hidden; }
-            
-            /* Exibe apenas a área de preview e o cartaz */
             #preview-area, #preview-area * { visibility: visible; }
             
+            html, body {
+                display: block !important;
+                background: white !important; margin: 0 !important; padding: 0 !important; 
+                height: auto !important; overflow: visible !important;
+                -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+            }
             #preview-area {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 21cm !important;
-                height: 29.7cm !important;
+                position: absolute !important; left: 0 !important; top: 0 !important;
+                margin: 0 !important; padding: 0 !important;
+                background: transparent !important;
                 overflow: visible !important;
-                background-color: white !important;
             }
-
-            .page-a4 {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 21cm !important;
-                height: 29.7cm !important;
-                box-shadow: none !important;
-                border: none !important;
-                background-image: none !important; /* Esconde a marca d'água na impressão */
+            .page {
+                position: absolute !important; left: 0 !important; top: 0 !important;
+                margin: 0 !important; padding: 0 !important;
+                box-shadow: none !important; border: none !important;
+                background-image: none !important; background-color: white !important;
+                page-break-inside: avoid !important;
+                /* As dimensões de papel da impressora lerão os calc() perfeitamente */
             }
-
             #control-panel, .print-hide { display: none !important; }
         }
     </style>
@@ -191,17 +216,27 @@
 <div id="control-panel" class="print-hide">
     <div class="header">
         <h1>Zenir Móveis</h1>
-        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Solução Final</p>
+        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Multi Tamanhos</p>
+    </div>
+
+    <!-- Tamanho do Cartaz (A4, A5, A6) -->
+    <div class="form-group">
+        <label>Tamanho da Folha</label>
+        <select id="in-tamanho-cartaz" onchange="toggleCartazTipo()" style="border-color: var(--zenir-red); border-width: 2px;">
+            <option value="A4">Tamanho A4 (Grande)</option>
+            <option value="A5">Tamanho A5 (Médio)</option>
+            <option value="A6">Tamanho A6 (Pequeno)</option>
+        </select>
     </div>
 
     <!-- Tipo de Cartaz -->
     <div class="form-group">
         <label>Tipo de Cartaz</label>
         <select id="in-tipo-cartaz" onchange="toggleCartazTipo()">
-            <option value="padrao">A4 Padrão (Parcelado)</option>
-            <option value="promocional">A4 Promocional (Parcelado)</option>
-            <option value="avista_padrao">A4 À Vista (Padrão)</option>
-            <option value="avista_promocional">A4 À Vista (Promocional)</option>
+            <option value="padrao">Padrão (Parcelado)</option>
+            <option value="promocional">Promocional (Parcelado)</option>
+            <option value="avista_padrao">Padrão (À Vista)</option>
+            <option value="avista_promocional">Promocional (À Vista)</option>
         </select>
     </div>
 
@@ -301,7 +336,7 @@
 </div>
 
 <div id="preview-area">
-    <div id="cartaz" class="page-a4">
+    <div id="cartaz" class="page size-A4">
         <!-- Textos Superiores -->
         <div id="field-produto" class="field"></div>
         <div id="field-ref-marca" class="field"><span id="out-ref"></span> <span id="out-marca" class="marca"></span></div>
@@ -326,21 +361,21 @@
             <span id="field-vista-label">À VISTA</span>
         </div>
 
-        <!-- GARANTIAS -->
-        <div class="garantia-item" id="g1-q" style="bottom: 3.5cm; left: 6cm;"></div>
-        <div class="garantia-item" id="g1-v" style="bottom: 3.5cm; left: 8cm;"></div>
-        <div class="garantia-item" id="g1-t" style="bottom: 3.0cm; left: 8cm;"></div>
-        <div class="garantia-item" id="g1-vis" style="bottom: 2.5cm; left: 8cm;"></div>
+        <!-- GARANTIAS (USANDO VARIÁVEIS CSS INLINE PARA AS COORDENADAS) -->
+        <div class="garantia-item" style="--b: 3.5; --l: 6;" id="g1-q"></div>
+        <div class="garantia-item" style="--b: 3.5; --l: 8;" id="g1-v"></div>
+        <div class="garantia-item" style="--b: 3.0; --l: 8;" id="g1-t"></div>
+        <div class="garantia-item" style="--b: 2.5; --l: 8;" id="g1-vis"></div>
         
-        <div class="garantia-item" id="g2-q" style="bottom: 3.5cm; left: 11cm;"></div>
-        <div class="garantia-item" id="g2-v" style="bottom: 3.5cm; left: 13cm;"></div>
-        <div class="garantia-item" id="g2-t" style="bottom: 3.0cm; left: 13cm;"></div>
-        <div class="garantia-item" id="g2-vis" style="bottom: 2.5cm; left: 13cm;"></div>
+        <div class="garantia-item" style="--b: 3.5; --l: 11;" id="g2-q"></div>
+        <div class="garantia-item" style="--b: 3.5; --l: 13;" id="g2-v"></div>
+        <div class="garantia-item" style="--b: 3.0; --l: 13;" id="g2-t"></div>
+        <div class="garantia-item" style="--b: 2.5; --l: 13;" id="g2-vis"></div>
         
-        <div class="garantia-item" id="g3-q" style="bottom: 3.5cm; left: 16cm;"></div>
-        <div class="garantia-item" id="g3-v" style="bottom: 3.5cm; left: 18cm;"></div>
-        <div class="garantia-item" id="g3-t" style="bottom: 3.0cm; left: 18cm;"></div>
-        <div class="garantia-item" id="g3-vis" style="bottom: 2.5cm; left: 18cm;"></div>
+        <div class="garantia-item" style="--b: 3.5; --l: 16;" id="g3-q"></div>
+        <div class="garantia-item" style="--b: 3.5; --l: 18;" id="g3-v"></div>
+        <div class="garantia-item" style="--b: 3.0; --l: 18;" id="g3-t"></div>
+        <div class="garantia-item" style="--b: 2.5; --l: 18;" id="g3-vis"></div>
     </div>
 </div>
 
@@ -473,10 +508,11 @@
         setSafeText('lbl-x', Number(x).toFixed(1) + 'cm');
         setSafeText('lbl-y', Number(y).toFixed(1) + 'cm');
 
-        document.documentElement.style.setProperty('--val-font-size', size + 'cm');
-        document.documentElement.style.setProperty('--val-letter-spacing', spacing + 'cm');
-        document.documentElement.style.setProperty('--val-x', x + 'cm');
-        document.documentElement.style.setProperty('--val-y', y + 'cm');
+        // Valores enviados puros pro CSS para que a variável --scale faça a mágica da proporção
+        document.documentElement.style.setProperty('--val-font-size', size);
+        document.documentElement.style.setProperty('--val-letter-spacing', spacing);
+        document.documentElement.style.setProperty('--val-x', x);
+        document.documentElement.style.setProperty('--val-y', y);
     }
 
     function resetAdjustments() {
@@ -492,12 +528,18 @@
     }
 
     function toggleCartazTipo() {
+        const tamanho = getTextVal('in-tamanho-cartaz');
         const tipo = getTextVal('in-tipo-cartaz');
         const cartaz = document.getElementById('cartaz');
         if (!cartaz) return;
         
-        cartaz.classList.remove('promocional', 'avista');
+        // Limpa todas as classes que afetam tamanho e tipo
+        cartaz.classList.remove('promocional', 'avista', 'size-A4', 'size-A5', 'size-A6');
         
+        // Adiciona classe de Tamanho
+        cartaz.classList.add('size-' + tamanho);
+
+        // Adiciona classes de Tipo
         if (tipo === 'promocional') {
             cartaz.classList.add('promocional');
         } else if (tipo === 'avista_padrao') {
