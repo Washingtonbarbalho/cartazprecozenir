@@ -189,21 +189,19 @@
         .page.size-A5.promocional #field-valor-parcela { bottom: 0.4cm !important; }
         .page.size-A5.promocional #field-totais { margin-top: -0.4cm !important; }
 
-        /* A5 Promocional - Garantias Verticais */
+        /* A5 Promocional - Garantias Verticais (Descendo 0.6cm -> -0.3cm e -0.4cm nos cálculos finais) */
         .page.size-A5.promocional #g1-q, .page.size-A5.promocional #g2-q, .page.size-A5.promocional #g3-q,
         .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g3-v {
-            bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) + 0.3cm) !important;
+            bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.3cm) !important;
         }
         .page.size-A5.promocional #g1-t, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g3-t,
         .page.size-A5.promocional #g1-vis, .page.size-A5.promocional #g2-vis, .page.size-A5.promocional #g3-vis {
-            /* Desceu 0.1cm */
-            bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) + 0.2cm) !important; 
+            bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.4cm) !important; 
         }
 
         /* A5 Promocional - Garantias Horizontais (+1 ano) */
         .page.size-A5.promocional #g1-q { left: calc((6cm * var(--scale)) - 2.9cm) !important; }
         .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g1-t, .page.size-A5.promocional #g1-vis {
-            /* Afastou 0.5cm p/ direita relativo ao -2.9cm anterior (-2.9 + 0.5 = -2.4) */
             left: calc((8cm * var(--scale)) - 2.4cm) !important; 
         }
 
@@ -217,6 +215,35 @@
         .page.size-A5.promocional #g3-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 9.0cm) !important; }
         .page.size-A5.promocional #g3-v, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g3-vis {
             left: calc(((8cm * var(--scale)) - 2.4cm) + 9.0cm) !important;
+        }
+
+
+        /* ===================================================================================
+           AJUSTES FINOS DE ALFAIATE: A5 PADRÃO (Parcelado e À Vista)
+           =================================================================================== */
+        
+        /* Quatro primeiras linhas 0.3cm para baixo e 0.4cm para direita */
+        .page.size-A5.padrao .field { 
+            margin-top: 0.3cm !important; 
+            margin-left: 0.4cm !important; 
+        }
+
+        /* Quantidade de parcelas e R$ 0.4cm para a direita */
+        .page.size-A5.padrao #field-parcelas-container { 
+            margin-left: 0.4cm !important; 
+        }
+
+        /* Todas as garantias 0.1cm para cima */
+        .page.size-A5.padrao .garantia-item { 
+            margin-bottom: 0.1cm !important; 
+        }
+
+        /* APENAS +3 anos 0.4cm para a esquerda */
+        .page.size-A5.padrao #g3-q,
+        .page.size-A5.padrao #g3-v,
+        .page.size-A5.padrao #g3-t,
+        .page.size-A5.padrao #g3-vis {
+            margin-left: -0.4cm !important;
         }
 
 
@@ -289,8 +316,7 @@
                 page-break-inside: avoid !important;
             }
             #control-panel, .print-hide { display: none !important; }
-            
-            #field-validade { color: #111 !important; } /* Força a data da promo ficar preta na impressão, evite tons claros */
+            #field-validade { color: #111 !important; } 
         }
     </style>
 </head>
@@ -299,7 +325,7 @@
 <div id="control-panel" class="print-hide">
     <div class="header">
         <h1>Zenir Móveis</h1>
-        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Multi Tamanhos Pro</p>
+        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Final v24</p>
     </div>
 
     <!-- Tamanho do Cartaz -->
@@ -537,9 +563,7 @@
         if (!document.getElementById('field-produto')) return; 
 
         setSafeText('field-produto', getTextVal('in-produto'));
-        
         setSafeText('field-validade', getTextVal('in-validade'));
-
         setSafeText('out-ref', getTextVal('in-ref'));
         setSafeText('out-marca', getTextVal('in-marca'));
         setSafeText('field-caracteristicas', getTextVal('in-carac'));
@@ -665,3 +689,5 @@
 
 </body>
 </html>
+
+
