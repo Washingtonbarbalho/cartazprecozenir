@@ -169,7 +169,7 @@
             left: calc(var(--l) * 1cm * var(--scale));
         }
 
-        /* --- MODIFICADORES DE TIPO DE CARTAZ (GERAL) --- */
+        /* --- MODIFICADORES DE TIPO DE CARTAZ (GERAL A4) --- */
         .page.promocional .garantia-item { margin-bottom: calc(0.85cm * var(--scale)); }
         .page.promocional #field-validade { display: block; }
 
@@ -181,35 +181,86 @@
         .page.avista #out-v-vis { display: none !important; }
         .page.avista #field-vista-label { font-size: calc(1.35cm * var(--scale)) !important; }
 
-        /* -------------------------------------------------------------------------
-           AJUSTES FINOS ESPECÍFICOS DE ALFAIATE SOLICITADOS (Substituem o padrão)
-           ------------------------------------------------------------------------- */
+
+        /* ===================================================================================
+           AJUSTES FINOS DE ALFAIATE: A5 PROMOCIONAL (Parcelado e À Vista)
+           =================================================================================== */
         
-        /* === 1. A5 PROMOCIONAL (Parcelado e À Vista) === */
-        .page.size-A5.promocional #field-valor-parcela { 
-            bottom: 0.4cm !important; 
+        .page.size-A5.promocional #field-valor-parcela { bottom: 0.4cm !important; }
+        .page.size-A5.promocional #field-totais { margin-top: -0.4cm !important; }
+
+        /* A5 Promocional - Garantias Verticais */
+        .page.size-A5.promocional #g1-q, .page.size-A5.promocional #g2-q, .page.size-A5.promocional #g3-q,
+        .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g3-v {
+            bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) + 0.3cm) !important;
         }
-        .page.size-A5.promocional #field-totais { 
-            margin-top: -0.4cm !important; 
-        }
-        .page.size-A5.promocional .garantia-item { 
-            margin-left: -2.9cm !important; 
-            margin-bottom: calc((0.85cm * var(--scale)) + 0.3cm) !important; 
+        .page.size-A5.promocional #g1-t, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g3-t,
+        .page.size-A5.promocional #g1-vis, .page.size-A5.promocional #g2-vis, .page.size-A5.promocional #g3-vis {
+            /* Desceu 0.1cm */
+            bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) + 0.2cm) !important; 
         }
 
-        /* === 2. A6 PADRÃO (Parcelado e À Vista) === */
-        .page.size-A6.padrao #field-parcelas-container { 
-            margin-left: 0.1cm !important; 
+        /* A5 Promocional - Garantias Horizontais (+1 ano) */
+        .page.size-A5.promocional #g1-q { left: calc((6cm * var(--scale)) - 2.9cm) !important; }
+        .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g1-t, .page.size-A5.promocional #g1-vis {
+            /* Afastou 0.5cm p/ direita relativo ao -2.9cm anterior (-2.9 + 0.5 = -2.4) */
+            left: calc((8cm * var(--scale)) - 2.4cm) !important; 
         }
-        .page.size-A6.padrao #field-totais { 
-            margin-top: -0.1cm !important; 
+
+        /* A5 Promocional - Garantias Horizontais (+2 anos -> 4.5cm do g1) */
+        .page.size-A5.promocional #g2-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 4.5cm) !important; }
+        .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g2-vis {
+            left: calc(((8cm * var(--scale)) - 2.4cm) + 4.5cm) !important;
         }
-        .page.size-A6.padrao .garantia-item { 
-            margin-left: -1.6cm !important; 
-            margin-bottom: 0.5cm !important; 
+
+        /* A5 Promocional - Garantias Horizontais (+3 anos -> 9cm do g1) */
+        .page.size-A5.promocional #g3-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 9.0cm) !important; }
+        .page.size-A5.promocional #g3-v, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g3-vis {
+            left: calc(((8cm * var(--scale)) - 2.4cm) + 9.0cm) !important;
         }
-        .page.size-A6.padrao .field { 
-            margin-left: 0.2cm !important; 
+
+
+        /* ===================================================================================
+           AJUSTES FINOS DE ALFAIATE: A6 PADRÃO (Parcelado e À Vista)
+           =================================================================================== */
+        
+        /* Parcelas "R$" 0.25cm a direita (0.1 original + 0.15 extra) */
+        .page.size-A6.padrao #field-parcelas-container { margin-left: 0.25cm !important; } 
+        
+        /* Totais 0.2cm para cima (-0.1 original + -0.1 extra) */
+        .page.size-A6.padrao #field-totais { margin-top: -0.2cm !important; } 
+        
+        /* Quatro linhas de cima (e a validade) 0.4cm direita (0.2 original + 0.2 extra) */
+        .page.size-A6.padrao .field { margin-left: 0.4cm !important; } 
+
+        /* A6 Padrão - Garantias Verticais */
+        .page.size-A6.padrao #g1-q, .page.size-A6.padrao #g2-q, .page.size-A6.padrao #g3-q,
+        .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g2-v, .page.size-A6.padrao #g3-v {
+            bottom: calc((var(--b) * 1cm * var(--scale)) + 0.5cm) !important;
+        }
+        .page.size-A6.padrao #g1-t, .page.size-A6.padrao #g2-t, .page.size-A6.padrao #g3-t,
+        .page.size-A6.padrao #g1-vis, .page.size-A6.padrao #g2-vis, .page.size-A6.padrao #g3-vis {
+            /* Desceu 0.15cm em relação ao 0.5cm (0.5 - 0.15 = 0.35cm) */
+            bottom: calc((var(--b) * 1cm * var(--scale)) + 0.35cm) !important; 
+        }
+
+        /* A6 Padrão - Garantias Horizontais (+1 ano) */
+        .page.size-A6.padrao #g1-q { left: calc((6cm * var(--scale)) - 1.6cm) !important; }
+        .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g1-t, .page.size-A6.padrao #g1-vis {
+            /* 0.1cm para a esquerda a partir do -1.6cm original (-1.6 - 0.1 = -1.7cm) */
+            left: calc((8cm * var(--scale)) - 1.7cm) !important; 
+        }
+
+        /* A6 Padrão - Garantias Horizontais (+2 anos -> 3cm do g1) */
+        .page.size-A6.padrao #g2-q { left: calc(((6cm * var(--scale)) - 1.6cm) + 3cm) !important; }
+        .page.size-A6.padrao #g2-v, .page.size-A6.padrao #g2-t, .page.size-A6.padrao #g2-vis {
+            left: calc(((8cm * var(--scale)) - 1.7cm) + 3cm) !important;
+        }
+
+        /* A6 Padrão - Garantias Horizontais (+3 anos -> 6cm do g1) */
+        .page.size-A6.padrao #g3-q { left: calc(((6cm * var(--scale)) - 1.6cm) + 6cm) !important; }
+        .page.size-A6.padrao #g3-v, .page.size-A6.padrao #g3-t, .page.size-A6.padrao #g3-vis {
+            left: calc(((8cm * var(--scale)) - 1.7cm) + 6cm) !important;
         }
 
 
@@ -238,7 +289,8 @@
                 page-break-inside: avoid !important;
             }
             #control-panel, .print-hide { display: none !important; }
-            #field-validade { color: #111 !important; }
+            
+            #field-validade { color: #111 !important; } /* Força a data da promo ficar preta na impressão, evite tons claros */
         }
     </style>
 </head>
@@ -376,7 +428,7 @@
     <div id="cartaz" class="page size-A4 padrao">
         <!-- Textos Superiores -->
         <div id="field-produto" class="field"></div>
-        <div id="field-validade" class="field"></div> <!-- CAMPO DA VALIDADE -->
+        <div id="field-validade" class="field"></div> 
         
         <div id="field-ref-marca" class="field"><span id="out-ref"></span> <span id="out-marca" class="marca"></span></div>
         <div id="field-caracteristicas" class="field"></div>
@@ -485,7 +537,9 @@
         if (!document.getElementById('field-produto')) return; 
 
         setSafeText('field-produto', getTextVal('in-produto'));
+        
         setSafeText('field-validade', getTextVal('in-validade'));
+
         setSafeText('out-ref', getTextVal('in-ref'));
         setSafeText('out-marca', getTextVal('in-marca'));
         setSafeText('field-caracteristicas', getTextVal('in-carac'));
@@ -572,13 +626,9 @@
         const cartaz = document.getElementById('cartaz');
         if (!cartaz) return;
         
-        // Limpa classes anteriores de tamanho e tipo
         cartaz.classList.remove('promocional', 'avista', 'padrao', 'size-A4', 'size-A5', 'size-A6');
-        
-        // Aplica classe do tamanho da folha
         cartaz.classList.add('size-' + tamanho);
 
-        // Aplica as classes do tipo escolhido
         if (tipo === 'padrao') {
             cartaz.classList.add('padrao');
         } else if (tipo === 'promocional') {
@@ -615,4 +665,3 @@
 
 </body>
 </html>
-
