@@ -169,7 +169,7 @@
             left: calc(var(--l) * 1cm * var(--scale));
         }
 
-        /* --- MODIFICADORES DE TIPO DE CARTAZ (GERAL A4) --- */
+        /* --- MODIFICADORES DE TIPO DE CARTAZ (GERAL) --- */
         .page.promocional .garantia-item { margin-bottom: calc(0.85cm * var(--scale)); }
         .page.promocional #field-validade { display: block; }
 
@@ -181,6 +181,13 @@
         .page.avista #out-v-vis { display: none !important; }
         .page.avista #field-vista-label { font-size: calc(1.35cm * var(--scale)) !important; }
 
+        /* ===================================================================================
+           AJUSTES FINOS DE ALFAIATE: A4 PADRÃO (Parcelado e À Vista)
+           =================================================================================== */
+        .page.size-A4.padrao .garantia-item {
+            /* Desce 0.3cm para todos os itens de garantia no formato Padrão do A4 */
+            bottom: calc((var(--b) * 1cm * var(--scale)) - 0.3cm) !important;
+        }
 
         /* ===================================================================================
            AJUSTES FINOS DE ALFAIATE: A5 PROMOCIONAL (Parcelado e À Vista)
@@ -325,7 +332,7 @@
 <div id="control-panel" class="print-hide">
     <div class="header">
         <h1>Zenir Móveis</h1>
-        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Final v24</p>
+        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Final v25</p>
     </div>
 
     <!-- Tamanho do Cartaz -->
@@ -689,5 +696,4 @@
 
 </body>
 </html>
-
 
