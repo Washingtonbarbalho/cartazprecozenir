@@ -185,8 +185,8 @@
            AJUSTES FINOS DE ALFAIATE: A4 PADRÃO (Parcelado e À Vista)
            =================================================================================== */
         .page.size-A4.padrao .garantia-item {
-            /* Desce 0.3cm para todos os itens de garantia no formato Padrão do A4 */
-            bottom: calc((var(--b) * 1cm * var(--scale)) - 0.3cm) !important;
+            /* Desce 0.15cm para todos os itens de garantia no formato Padrão do A4 (anteriormente era -0.3cm) */
+            bottom: calc((var(--b) * 1cm * var(--scale)) - 0.15cm) !important;
         }
 
         /* ===================================================================================
@@ -196,7 +196,7 @@
         .page.size-A5.promocional #field-valor-parcela { bottom: 0.4cm !important; }
         .page.size-A5.promocional #field-totais { margin-top: -0.4cm !important; }
 
-        /* A5 Promocional - Garantias Verticais (Descendo 0.6cm -> -0.3cm e -0.4cm nos cálculos finais) */
+        /* A5 Promocional - Garantias Verticais */
         .page.size-A5.promocional #g1-q, .page.size-A5.promocional #g2-q, .page.size-A5.promocional #g3-q,
         .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g3-v {
             bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.3cm) !important;
@@ -332,7 +332,7 @@
 <div id="control-panel" class="print-hide">
     <div class="header">
         <h1>Zenir Móveis</h1>
-        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Final v25</p>
+        <p style="font-size: 0.7rem; color: #888;">Gerador de Preços - Final v26</p>
     </div>
 
     <!-- Tamanho do Cartaz -->
