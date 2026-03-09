@@ -22,10 +22,10 @@
             --bg-color: #f0f2f5;
             --zenir-red: #e30613;
             --zenir-blue: #003399;
-            --val-font-size: 9;
+            --val-font-size: 10.2;
             --val-letter-spacing: -0.55;
             --val-x: 0;
-            --val-y: 0;
+            --val-y: -0.8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -145,8 +145,16 @@
         #field-parcelas-container { position: absolute; left: calc(1cm * var(--scale)); bottom: calc(1.1cm * var(--scale)); display: flex; flex-direction: column; line-height: 0.85; font-size: calc(2.2cm * var(--scale)); font-weight: 700; transform: scaleX(0.85); transform-origin: left bottom; text-align: center; }
         #field-valor-parcela { position: absolute; left: 0; width: 100%; bottom: 0; text-align: center; transform: scaleX(0.70); transform-origin: center bottom; line-height: 0.8; font-weight: 700; font-size: calc(var(--val-font-size) * 1cm * var(--scale)); letter-spacing: calc(var(--val-letter-spacing) * 1cm * var(--scale)); margin-left: calc(var(--val-x) * 1cm * var(--scale)); margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); }
         
-        /* CLASSE PARA POSICIONAMENTO DOS CENTAVOS SUPERIORES */
-        .cents-superscript { font-size: 50%; vertical-align: super; line-height: 0; position: relative; top: -0.2em; }
+        /* CLASSE PARA POSICIONAMENTO DOS CENTAVOS SUPERIORES COM NOVO ESPAÇAMENTO */
+        .cents-superscript { 
+            font-size: 50%; 
+            vertical-align: super; 
+            line-height: 0; 
+            position: relative; 
+            top: -0.2em; 
+            margin-left: 0.05em; /* Leve afastamento do número principal */
+            letter-spacing: -0.05em; /* Neutraliza o esmagamento (-0.55cm) que vinha do bloco pai */
+        }
 
         #field-totais { position: absolute; top: calc(20.2cm * var(--scale)); left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); border-top: calc(2px * var(--scale)) solid #000; border-bottom: calc(2px * var(--scale)) solid #000; padding: calc(0.1cm * var(--scale)) 0; display: flex; align-items: baseline; justify-content: center; }
         #field-totais span { font-size: calc(0.75cm * var(--scale)); font-weight: 700; }
@@ -450,10 +458,10 @@
         <details class="ajustes-details">
             <summary>Ajustes Finos (Valor Centro)</summary>
             <div style="padding-top: 10px;">
-                <div class="slider-group"><label>Tamanho <span id="lbl-size">9.0cm</span></label><input type="range" id="adj-size" min="5" max="13" step="0.1" value="9" oninput="window.applyAdjustments()"></div>
+                <div class="slider-group"><label>Tamanho <span id="lbl-size">10.2cm</span></label><input type="range" id="adj-size" min="5" max="15" step="0.1" value="10.2" oninput="window.applyAdjustments()"></div>
                 <div class="slider-group"><label>Aproximar Letras <span id="lbl-spacing">-0.55cm</span></label><input type="range" id="adj-spacing" min="-1.5" max="0" step="0.05" value="-0.55" oninput="window.applyAdjustments()"></div>
                 <div class="slider-group"><label>Eixo X <span id="lbl-x">0.0cm</span></label><input type="range" id="adj-x" min="-5" max="5" step="0.1" value="0" oninput="window.applyAdjustments()"></div>
-                <div class="slider-group"><label>Eixo Y <span id="lbl-y">0.0cm</span></label><input type="range" id="adj-y" min="-3" max="5" step="0.1" value="0" oninput="window.applyAdjustments()"></div>
+                <div class="slider-group"><label>Eixo Y <span id="lbl-y">-0.8cm</span></label><input type="range" id="adj-y" min="-3" max="5" step="0.1" value="-0.8" oninput="window.applyAdjustments()"></div>
                 <button class="btn-reset" onclick="window.resetAdjustments()">Restaurar</button>
             </div>
         </details>
@@ -846,7 +854,16 @@
         if(data.g1) { window.setInputVal('in-g1-q', data.g1.q); window.setInputVal('in-g1-v', data.g1.v); window.setInputVal('in-g1-t', data.g1.t); }
         if(data.g2) { window.setInputVal('in-g2-q', data.g2.q); window.setInputVal('in-g2-v', data.g2.v); window.setInputVal('in-g2-t', data.g2.t); }
         if(data.g3) { window.setInputVal('in-g3-q', data.g3.q); window.setInputVal('in-g3-v', data.g3.v); window.setInputVal('in-g3-t', data.g3.t); }
-        if(data.ajustes) { window.setInputVal('adj-size', data.ajustes.size || 9); window.setInputVal('adj-spacing', data.ajustes.spacing || -0.55); window.setInputVal('adj-x', data.ajustes.x || 0); window.setInputVal('adj-y', data.ajustes.y || 0); } else { window.resetAdjustments(); }
+        
+        // Se já tiver ajustes salvos antigamente, mantemos, senão usa o novo padrão 10.2 e -0.8
+        if(data.ajustes) { 
+            window.setInputVal('adj-size', data.ajustes.size || 10.2); 
+            window.setInputVal('adj-spacing', data.ajustes.spacing || -0.55); 
+            window.setInputVal('adj-x', data.ajustes.x || 0); 
+            window.setInputVal('adj-y', data.ajustes.y || -0.8); 
+        } else { 
+            window.resetAdjustments(); 
+        }
     };
 
     window.clearForm = function() {
@@ -894,11 +911,12 @@
         const parcelas = window.getTextVal('in-parcelas'); window.setSafeText('out-parcelas', parcelas ? parcelas + 'x' : '');
         const cartaz = document.getElementById('cartaz'); 
         
-        // --- NOVO SCRIPT PARA RECORTE E POSICIONAMENTO DOS CENTAVOS ---
+        // --- SCRIPT DOS CENTAVOS SUPERIORES COM NOVO ESPAÇAMENTO ---
         let valorParcelaTexto = cartaz.classList.contains('avista') ? window.getTextVal('in-v-vis') : window.getTextVal('in-v-parc');
         if (valorParcelaTexto && valorParcelaTexto.includes(',')) {
             let partes = valorParcelaTexto.split(',');
-            document.getElementById('field-valor-parcela').innerHTML = partes[0] + '<span class="cents-superscript">,' + partes[1] + '</span>';
+            // Injeta um "thin space" (&thinsp;) para o espaço ficar pequeno e proporcional
+            document.getElementById('field-valor-parcela').innerHTML = partes[0] + '<span class="cents-superscript">,&thinsp;' + partes[1] + '</span>';
         } else {
             window.setSafeText('field-valor-parcela', valorParcelaTexto);
         }
@@ -912,13 +930,14 @@
 
     window.applyAdjustments = function() {
         if (!document.getElementById('lbl-size')) return; 
-        const s = window.getTextVal('adj-size') || 9, sp = window.getTextVal('adj-spacing') || -0.55, x = window.getTextVal('adj-x') || 0, y = window.getTextVal('adj-y') || 0;
+        const s = window.getTextVal('adj-size') || 10.2, sp = window.getTextVal('adj-spacing') || -0.55, x = window.getTextVal('adj-x') || 0, y = window.getTextVal('adj-y') || -0.8;
         window.setSafeText('lbl-size', Number(s).toFixed(1) + 'cm'); window.setSafeText('lbl-spacing', Number(sp).toFixed(2) + 'cm'); window.setSafeText('lbl-x', Number(x).toFixed(1) + 'cm'); window.setSafeText('lbl-y', Number(y).toFixed(1) + 'cm');
         document.documentElement.style.setProperty('--val-font-size', s); document.documentElement.style.setProperty('--val-letter-spacing', sp); document.documentElement.style.setProperty('--val-x', x); document.documentElement.style.setProperty('--val-y', y);
     };
 
     window.resetAdjustments = function() {
-        ['adj-size', 'adj-spacing', 'adj-x', 'adj-y'].forEach((id, i) => { let el = document.getElementById(id); if(el) el.value = [9, -0.55, 0, 0][i]; }); window.applyAdjustments();
+        // Agora restaura para os novos padrões: Tamanho 10.2 e Eixo Y -0.8
+        ['adj-size', 'adj-spacing', 'adj-x', 'adj-y'].forEach((id, i) => { let el = document.getElementById(id); if(el) el.value = [10.2, -0.55, 0, -0.8][i]; }); window.applyAdjustments();
     };
 
     window.toggleCartazTipo = function() {
@@ -930,4 +949,5 @@
 </script>
 </body>
 </html>
+
 
