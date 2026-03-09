@@ -132,15 +132,22 @@
         .page.size-A6 { --scale: 0.5000; } 
 
         .field { position: absolute; left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); line-height: 1.2; word-wrap: break-word; }
-        #field-produto { top: calc(4.6cm * var(--scale)); font-size: calc(1cm * var(--scale)); font-weight: 700; }
-        #field-validade { top: calc(4.6cm * var(--scale)); font-family: 'Lato', sans-serif; font-size: calc(9pt * var(--scale)); font-weight: 400; text-align: right; color: var(--zenir-red); display: none; }
-        #field-ref-marca { top: calc(5.8cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 400; }
+        
+        /* ALTERAÇÕES DE TAMANHO E POSICIONAMENTO AQUI */
+        #field-produto { top: calc(4.4cm * var(--scale)); font-size: calc(1.2cm * var(--scale)); font-weight: 700; line-height: 1.1; }
+        #field-validade { top: calc(4.4cm * var(--scale)); font-family: 'Lato', sans-serif; font-size: calc(9pt * var(--scale)); font-weight: 400; text-align: right; color: var(--zenir-red); display: none; }
+        #field-ref-marca { top: calc(5.7cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 400; line-height: 1.1; }
         #field-ref-marca span.marca { font-weight: 700; }
-        #field-caracteristicas { top: calc(6.7cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 700; }
-        #field-codigo { top: calc(7.7cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 400; }
+        #field-caracteristicas { top: calc(6.7cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 700; line-height: 1.1; }
+        #field-codigo { top: calc(7.8cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 400; }
+        
         #price-block { position: absolute; top: calc(8.5cm * var(--scale)); left: 0; width: 100%; height: calc(9.5cm * var(--scale)); }
         #field-parcelas-container { position: absolute; left: calc(1cm * var(--scale)); bottom: calc(1.1cm * var(--scale)); display: flex; flex-direction: column; line-height: 0.85; font-size: calc(2.2cm * var(--scale)); font-weight: 700; transform: scaleX(0.85); transform-origin: left bottom; text-align: center; }
         #field-valor-parcela { position: absolute; left: 0; width: 100%; bottom: 0; text-align: center; transform: scaleX(0.70); transform-origin: center bottom; line-height: 0.8; font-weight: 700; font-size: calc(var(--val-font-size) * 1cm * var(--scale)); letter-spacing: calc(var(--val-letter-spacing) * 1cm * var(--scale)); margin-left: calc(var(--val-x) * 1cm * var(--scale)); margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); }
+        
+        /* CLASSE PARA POSICIONAMENTO DOS CENTAVOS SUPERIORES */
+        .cents-superscript { font-size: 50%; vertical-align: super; line-height: 0; position: relative; top: -0.2em; }
+
         #field-totais { position: absolute; top: calc(20.2cm * var(--scale)); left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); border-top: calc(2px * var(--scale)) solid #000; border-bottom: calc(2px * var(--scale)) solid #000; padding: calc(0.1cm * var(--scale)) 0; display: flex; align-items: baseline; justify-content: center; }
         #field-totais span { font-size: calc(0.75cm * var(--scale)); font-weight: 700; }
         #out-tot-praz { margin-right: calc(0.2cm * var(--scale)); }
@@ -177,7 +184,7 @@
         .page.size-A6.padrao #field-parcelas-container { margin-left: 0.25cm !important; } 
         .page.size-A6.padrao #field-totais { margin-top: -0.2cm !important; } 
         .page.size-A6.padrao .field { margin-left: 0.4cm !important; } 
-        .page.size-A6.padrao #g1-q, .page.size-A6.padrao #g2-q, .page.size-A6.padrao #g3-q, .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g2-v, .page.size-A6.padrao #g3-v { bottom: calc((var(--b) * 1cm * var(--scale)) + 0.5cm) !important; }
+        .page.size-A6.padrao #g1-q, .page.size-A6.padrao #g3-q, .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g2-v, .page.size-A6.padrao #g3-v { bottom: calc((var(--b) * 1cm * var(--scale)) + 0.5cm) !important; }
         .page.size-A6.padrao #g1-t, .page.size-A6.padrao #g2-t, .page.size-A6.padrao #g3-t, .page.size-A6.padrao #g1-vis, .page.size-A6.padrao #g2-vis, .page.size-A6.padrao #g3-vis { bottom: calc((var(--b) * 1cm * var(--scale)) + 0.35cm) !important; }
         .page.size-A6.padrao #g1-q { left: calc((6cm * var(--scale)) - 1.6cm) !important; }
         .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g1-t, .page.size-A6.padrao #g1-vis { left: calc((8cm * var(--scale)) - 1.7cm) !important; }
@@ -885,7 +892,18 @@
         if (!document.getElementById('field-produto')) return; 
         window.setSafeText('field-produto', window.getTextVal('in-produto')); window.setSafeText('field-validade', window.getTextVal('in-validade')); window.setSafeText('out-ref', window.getTextVal('in-ref')); window.setSafeText('out-marca', window.getTextVal('in-marca')); window.setSafeText('field-caracteristicas', window.getTextVal('in-carac')); window.setSafeText('field-codigo', window.getTextVal('in-codigo'));
         const parcelas = window.getTextVal('in-parcelas'); window.setSafeText('out-parcelas', parcelas ? parcelas + 'x' : '');
-        const cartaz = document.getElementById('cartaz'); if (cartaz.classList.contains('avista')) { window.setSafeText('field-valor-parcela', window.getTextVal('in-v-vis')); } else { window.setSafeText('field-valor-parcela', window.getTextVal('in-v-parc')); }
+        const cartaz = document.getElementById('cartaz'); 
+        
+        // --- NOVO SCRIPT PARA RECORTE E POSICIONAMENTO DOS CENTAVOS ---
+        let valorParcelaTexto = cartaz.classList.contains('avista') ? window.getTextVal('in-v-vis') : window.getTextVal('in-v-parc');
+        if (valorParcelaTexto && valorParcelaTexto.includes(',')) {
+            let partes = valorParcelaTexto.split(',');
+            document.getElementById('field-valor-parcela').innerHTML = partes[0] + '<span class="cents-superscript">,' + partes[1] + '</span>';
+        } else {
+            window.setSafeText('field-valor-parcela', valorParcelaTexto);
+        }
+        // --------------------------------------------------------------
+
         const totalP = window.getTextVal('in-tot-praz'); window.setSafeText('out-tot-praz', totalP ? '= R$ ' + totalP : ''); const totalV = window.getTextVal('in-v-vis'); window.setSafeText('out-v-vis', totalV ? 'R$ ' + totalV : '');
         const condicao = window.getTextVal('in-condicao'); const pLabel = document.getElementById('field-prazo-label'); const pSub = document.getElementById('field-prazo-sublabel');
         if (pLabel && pSub) { if (condicao === 'carne') { pLabel.innerText = 'À PRAZO'; pSub.innerText = '6,9% a.m. e 122,71% a.a.'; pSub.style.display = 'block'; } else if (condicao === 'cartao_fator') { pLabel.innerText = 'NO CARTÃO'; pSub.innerText = '2,92% a.m. e 41,25% a.a.'; pSub.style.display = 'block'; } else if (condicao === 'cartao_sem_juros') { pLabel.innerText = 'NO CARTÃO'; pSub.innerText = 'sem juros'; pSub.style.display = 'block'; } }
