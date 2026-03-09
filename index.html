@@ -152,7 +152,7 @@
         #field-caracteristicas { top: calc(6.7cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 700; line-height: 1.1; }
         #field-codigo { top: calc(7.8cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 400; line-height: 1.1; }
         
-        /* NOVO MODELO DE ALINHAMENTO DO PREÇO (PERFEITAMENTE CENTRALIZADO E PROPORCIONAL) */
+        /* NOVO MODELO DE ALINHAMENTO DO PREÇO */
         #price-block { position: absolute; top: calc(8.7cm * var(--scale)); left: 0; width: 100%; height: calc(10.3cm * var(--scale)); display: flex; align-items: flex-end; justify-content: center; }
         
         #price-cluster { display: flex; align-items: flex-end; justify-content: center; margin-left: calc(var(--val-x) * 1cm * var(--scale)); margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); }
@@ -163,15 +163,13 @@
         
         .int-part { font-size: calc(var(--val-font-size) * 1cm * var(--scale)); }
         
-        /* Regra Especial para os centavos: Não amassa e descola um pouco da vírgula */
         .cents-part { 
             font-size: calc((var(--val-font-size) * 0.45) * 1cm * var(--scale)); 
             margin-top: calc((var(--val-font-size) * 0.04) * 1cm * var(--scale)); 
-            margin-left: calc(0.15cm * var(--scale)); /* Distância da vírgula */
-            letter-spacing: calc((var(--val-letter-spacing) * 0.35) * 1cm * var(--scale)); /* Alivia o esmagamento dos centavos */
+            margin-left: calc(0.15cm * var(--scale)); 
+            letter-spacing: calc((var(--val-letter-spacing) * 0.35) * 1cm * var(--scale)); 
         }
         
-        /* REGRAS ESPECÍFICAS PARA A TELA "À VISTA" (CENTRALIZADO) */
         .page.avista #price-cluster { width: 100%; justify-content: center; margin-left: 0 !important; }
         .page.avista #field-valor-parcela { transform-origin: center bottom; width: 100%; justify-content: center; }
 
@@ -194,8 +192,16 @@
         .page.avista #out-tot-praz, .page.avista #prazo-text-group, .page.avista .separator, .page.avista #out-v-vis { display: none !important; }
         .page.avista #field-vista-label { font-size: calc(1.35cm * var(--scale)) !important; }
 
+        /* =======================================================
+           APLICAÇÃO MILIMÉTRICA: CORREÇÕES SOLICITADAS NO LAYOUT
+           ======================================================= */
+        
+        /* A4 PROMOCIONAL: Descer 0,15cm as linhas de cima */
+        .page.size-A4.promocional .field { margin-top: 0.15cm !important; }
         .page.size-A4.padrao .garantia-item { bottom: calc((var(--b) * 1cm * var(--scale)) - 0.15cm) !important; }
-        .page.size-A5.promocional #price-block { top: 0 !important; }
+
+        /* A5 PROMOCIONAL: Descer 0,15cm as linhas e restaurado bug do top zero do preço */
+        .page.size-A5.promocional .field { margin-top: 0.15cm !important; margin-left: 0.4cm !important; }
         .page.size-A5.promocional #field-totais { margin-top: -0.4cm !important; }
         .page.size-A5.promocional #g1-q, .page.size-A5.promocional #g2-q, .page.size-A5.promocional #g3-q, .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g3-v { bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.3cm) !important; }
         .page.size-A5.promocional #g1-t, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g1-vis, .page.size-A5.promocional #g2-vis, .page.size-A5.promocional #g3-vis { bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.4cm) !important; }
@@ -205,11 +211,20 @@
         .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g2-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 4.5cm) !important; }
         .page.size-A5.promocional #g3-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 9.0cm) !important; }
         .page.size-A5.promocional #g3-v, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g3-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 9.0cm) !important; }
-        .page.size-A5.padrao .field { margin-top: 0.3cm !important; margin-left: 0.4cm !important; }
+        
+        /* A5 PADRÃO: Descer linhas, e arrastar preço para a direita 0,2cm */
+        .page.size-A5.padrao .field { margin-top: 0.45cm !important; margin-left: 0.4cm !important; } /* Aumentado de 0.3 para 0.45cm */
+        .page.size-A5.padrao:not(.avista) #price-block { margin-left: calc(0.2cm * var(--scale)) !important; }
         .page.size-A5.padrao .garantia-item { margin-bottom: 0.1cm !important; }
         .page.size-A5.padrao #g3-q, .page.size-A5.padrao #g3-v, .page.size-A5.padrao #g3-t, .page.size-A5.padrao #g3-vis { margin-left: -0.4cm !important; }
-        .page.size-A6.padrao #field-totais { margin-top: -0.2cm !important; } 
+
+        /* A6 PROMOCIONAL: Descer 0,15cm as linhas */
+        .page.size-A6.promocional .field { margin-top: 0.15cm !important; margin-left: 0.4cm !important; }
+
+        /* A6 PADRÃO: Subir e arrastar preço, e centralizar linhas de total */
         .page.size-A6.padrao .field { margin-left: 0.4cm !important; } 
+        .page.size-A6.padrao:not(.avista) #price-block { top: calc(8.5cm * var(--scale)) !important; margin-left: calc(0.2cm * var(--scale)) !important; } /* Subiu de 8.7 para 8.5 e afastou para direita */
+        .page.size-A6.padrao #field-totais { margin-top: -0.2cm !important; left: calc(1.25cm * var(--scale)) !important; right: calc(1.25cm * var(--scale)) !important; } /* Linhas centralizadas perfeitamente na página */
         .page.size-A6.padrao #g1-q, .page.size-A6.padrao #g2-q, .page.size-A6.padrao #g3-q, .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g2-v, .page.size-A6.padrao #g3-v { bottom: calc((var(--b) * 1cm * var(--scale)) + 0.5cm) !important; }
         .page.size-A6.padrao #g1-t, .page.size-A6.padrao #g2-t, .page.size-A6.padrao #g3-t, .page.size-A6.padrao #g1-vis, .page.size-A6.padrao #g2-vis, .page.size-A6.padrao #g3-vis { bottom: calc((var(--b) * 1cm * var(--scale)) + 0.35cm) !important; }
         .page.size-A6.padrao #g1-q { left: calc((6cm * var(--scale)) - 1.6cm) !important; }
