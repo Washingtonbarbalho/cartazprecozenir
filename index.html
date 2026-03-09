@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="icon-512.png">
 
     <!-- Importação das Fontes -->
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Oswald:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -131,16 +131,40 @@
         .page.size-A5 { --scale: 0.7071; } 
         .page.size-A6 { --scale: 0.5000; } 
 
-        .field { position: absolute; left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); line-height: 1.2; word-wrap: break-word; }
-        #field-produto { top: calc(4.6cm * var(--scale)); font-size: calc(1cm * var(--scale)); font-weight: 700; }
+        .field { position: absolute; left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); word-wrap: break-word; }
+        
+        /* Ajuste Visual Fino das 4 Linhas Iniciais (Maior) */
+        #field-produto { top: calc(4.2cm * var(--scale)); font-size: calc(1.3cm * var(--scale)); font-weight: 700; line-height: 1.1; }
         #field-validade { top: calc(4.6cm * var(--scale)); font-family: 'Lato', sans-serif; font-size: calc(9pt * var(--scale)); font-weight: 400; text-align: right; color: var(--zenir-red); display: none; }
-        #field-ref-marca { top: calc(5.8cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 400; }
+        #field-ref-marca { top: calc(5.6cm * var(--scale)); font-size: calc(0.9cm * var(--scale)); font-weight: 400; line-height: 1.1; }
         #field-ref-marca span.marca { font-weight: 700; }
-        #field-caracteristicas { top: calc(6.7cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 700; }
-        #field-codigo { top: calc(7.7cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 400; }
-        #price-block { position: absolute; top: calc(8.5cm * var(--scale)); left: 0; width: 100%; height: calc(9.5cm * var(--scale)); }
-        #field-parcelas-container { position: absolute; left: calc(1cm * var(--scale)); bottom: calc(1.1cm * var(--scale)); display: flex; flex-direction: column; line-height: 0.85; font-size: calc(2.2cm * var(--scale)); font-weight: 700; transform: scaleX(0.85); transform-origin: left bottom; text-align: center; }
-        #field-valor-parcela { position: absolute; left: 0; width: 100%; bottom: 0; text-align: center; transform: scaleX(0.70); transform-origin: center bottom; line-height: 0.8; font-weight: 700; font-size: calc(var(--val-font-size) * 1cm * var(--scale)); letter-spacing: calc(var(--val-letter-spacing) * 1cm * var(--scale)); margin-left: calc(var(--val-x) * 1cm * var(--scale)); margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); }
+        #field-caracteristicas { top: calc(6.7cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 700; line-height: 1.1; }
+        #field-codigo { top: calc(7.8cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 400; line-height: 1.1; }
+        
+        /* NOVO MODELO DE ALINHAMENTO DO PREÇO (PERFEITAMENTE CENTRALIZADO E PROPORCIONAL) */
+        #price-block { position: absolute; top: calc(8.7cm * var(--scale)); left: 0; width: 100%; height: calc(10.3cm * var(--scale)); display: flex; align-items: flex-end; justify-content: center; }
+        
+        #price-cluster { display: flex; align-items: flex-end; justify-content: center; margin-left: calc(var(--val-x) * 1cm * var(--scale)); margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); }
+        
+        #field-parcelas-container { display: flex; flex-direction: column; justify-content: flex-end; line-height: 0.85; font-size: calc(2.4cm * var(--scale)); font-weight: 900; transform: scaleX(0.85); transform-origin: right bottom; text-align: right; margin-right: calc(0.3cm * var(--scale)); margin-bottom: calc((var(--val-font-size) * 0.08) * 1cm * var(--scale)); }
+        
+        #field-valor-parcela { display: flex; align-items: flex-start; line-height: 0.75; font-weight: 900; transform: scaleX(0.70); transform-origin: left bottom; letter-spacing: calc(var(--val-letter-spacing) * 1cm * var(--scale)); }
+        
+        .int-part { font-size: calc(var(--val-font-size) * 1cm * var(--scale)); }
+        
+        /* Regra Especial para os centavos: Não amassa e descola um pouco da vírgula */
+        .cents-part { 
+            font-size: calc((var(--val-font-size) * 0.45) * 1cm * var(--scale)); 
+            margin-top: calc((var(--val-font-size) * 0.04) * 1cm * var(--scale)); 
+            margin-left: calc(0.15cm * var(--scale)); /* Distância da vírgula */
+            letter-spacing: calc((var(--val-letter-spacing) * 0.35) * 1cm * var(--scale)); /* Alivia o esmagamento dos centavos */
+        }
+        
+        /* REGRAS ESPECÍFICAS PARA A TELA "À VISTA" (CENTRALIZADO) */
+        .page.avista #price-cluster { width: 100%; justify-content: center; margin-left: 0 !important; }
+        .page.avista #field-valor-parcela { transform-origin: center bottom; width: 100%; justify-content: center; }
+
+        /* Totais e Garantias */
         #field-totais { position: absolute; top: calc(20.2cm * var(--scale)); left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); border-top: calc(2px * var(--scale)) solid #000; border-bottom: calc(2px * var(--scale)) solid #000; padding: calc(0.1cm * var(--scale)) 0; display: flex; align-items: baseline; justify-content: center; }
         #field-totais span { font-size: calc(0.75cm * var(--scale)); font-weight: 700; }
         #out-tot-praz { margin-right: calc(0.2cm * var(--scale)); }
@@ -160,7 +184,7 @@
         .page.avista #field-vista-label { font-size: calc(1.35cm * var(--scale)) !important; }
 
         .page.size-A4.padrao .garantia-item { bottom: calc((var(--b) * 1cm * var(--scale)) - 0.15cm) !important; }
-        .page.size-A5.promocional #field-valor-parcela { bottom: 0.4cm !important; }
+        .page.size-A5.promocional #price-block { top: 0 !important; }
         .page.size-A5.promocional #field-totais { margin-top: -0.4cm !important; }
         .page.size-A5.promocional #g1-q, .page.size-A5.promocional #g2-q, .page.size-A5.promocional #g3-q, .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g3-v { bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.3cm) !important; }
         .page.size-A5.promocional #g1-t, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g1-vis, .page.size-A5.promocional #g2-vis, .page.size-A5.promocional #g3-vis { bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.4cm) !important; }
@@ -171,10 +195,8 @@
         .page.size-A5.promocional #g3-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 9.0cm) !important; }
         .page.size-A5.promocional #g3-v, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g3-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 9.0cm) !important; }
         .page.size-A5.padrao .field { margin-top: 0.3cm !important; margin-left: 0.4cm !important; }
-        .page.size-A5.padrao #field-parcelas-container { margin-left: 0.4cm !important; }
         .page.size-A5.padrao .garantia-item { margin-bottom: 0.1cm !important; }
         .page.size-A5.padrao #g3-q, .page.size-A5.padrao #g3-v, .page.size-A5.padrao #g3-t, .page.size-A5.padrao #g3-vis { margin-left: -0.4cm !important; }
-        .page.size-A6.padrao #field-parcelas-container { margin-left: 0.25cm !important; } 
         .page.size-A6.padrao #field-totais { margin-top: -0.2cm !important; } 
         .page.size-A6.padrao .field { margin-left: 0.4cm !important; } 
         .page.size-A6.padrao #g1-q, .page.size-A6.padrao #g2-q, .page.size-A6.padrao #g3-q, .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g2-v, .page.size-A6.padrao #g3-v { bottom: calc((var(--b) * 1cm * var(--scale)) + 0.5cm) !important; }
@@ -196,16 +218,33 @@
             .tab-btn { flex: 1; text-align: center; }
         }
 
-        /* 🔴 MOTOR DE IMPRESSÃO BLINDADO 🔴 */
+        /* 🔴 BLINDAGEM MÁXIMA DE IMPRESSÃO (CORRIGE TELA BRANCA NO ANDROID/iOS) 🔴 */
         @media print {
-            @page { margin: 0; }
-            body * { visibility: hidden; }
-            #editor-screen { display: flex !important; }
-            #preview-area, #preview-area * { visibility: visible; }
-            html, body { display: block !important; background: white !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            #preview-area { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; padding: 0 !important; background: transparent !important; overflow: visible !important; }
-            .page { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; background-image: none !important; background-color: white !important; page-break-inside: avoid !important; }
-            .print-hide { display: none !important; }
+            @page { margin: 0; size: auto; }
+            
+            html, body { 
+                width: 100% !important; height: 100% !important; margin: 0 !important; padding: 0 !important; 
+                background: white !important; display: block !important; overflow: visible !important; 
+                -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; 
+            }
+
+            /* Oculta completamente TUDO que não seja a tela do editor */
+            body > div:not(#editor-screen) { display: none !important; }
+            #control-panel, .editor-header, details.ajustes-details, button.btn-zenir { display: none !important; }
+            
+            #editor-screen { display: block !important; position: static !important; }
+            
+            #preview-area { 
+                display: block !important; position: static !important; padding: 0 !important; 
+                margin: 0 !important; overflow: visible !important; background: white !important; 
+            }
+            
+            /* Remove absolute/hidden do cartaz para gerar fluxo real de documento e altura */
+            .page { 
+                position: static !important; margin: 0 auto !important; box-shadow: none !important; 
+                border: none !important; page-break-inside: avoid !important; overflow: visible !important; 
+            }
+
             #field-validade { color: #111 !important; } 
         }
     </style>
@@ -460,10 +499,19 @@
             <div id="field-ref-marca" class="field"><span id="out-ref"></span> <span id="out-marca" class="marca"></span></div>
             <div id="field-caracteristicas" class="field"></div>
             <div id="field-codigo" class="field"></div>
+            
             <div id="price-block">
-                <div id="field-parcelas-container"><span id="out-parcelas"></span><span>R$</span></div>
-                <div id="field-valor-parcela"></div>
+                <div id="price-cluster">
+                    <div id="field-parcelas-container">
+                        <span id="out-parcelas"></span>
+                        <span>R$</span>
+                    </div>
+                    <div id="field-valor-parcela">
+                        <!-- Preenchido via JS dinamicamente -->
+                    </div>
+                </div>
             </div>
+
             <div id="field-totais">
                 <span id="out-tot-praz"></span>
                 <div id="prazo-text-group">
@@ -474,18 +522,10 @@
                 <span id="out-v-vis"></span>
                 <span id="field-vista-label">À VISTA</span>
             </div>
-            <div class="garantia-item" style="--b: 3.5; --l: 6;" id="g1-q"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 8;" id="g1-v"></div>
-            <div class="garantia-item" style="--b: 3.0; --l: 8;" id="g1-t"></div>
-            <div class="garantia-item" style="--b: 2.5; --l: 8;" id="g1-vis"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 11;" id="g2-q"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 13;" id="g2-v"></div>
-            <div class="garantia-item" style="--b: 3.0; --l: 13;" id="g2-t"></div>
-            <div class="garantia-item" style="--b: 2.5; --l: 13;" id="g2-vis"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 16;" id="g3-q"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 18;" id="g3-v"></div>
-            <div class="garantia-item" style="--b: 3.0; --l: 18;" id="g3-t"></div>
-            <div class="garantia-item" style="--b: 2.5; --l: 18;" id="g3-vis"></div>
+            
+            <div class="garantia-item" style="--b: 3.5; --l: 6;" id="g1-q"></div><div class="garantia-item" style="--b: 3.5; --l: 8;" id="g1-v"></div><div class="garantia-item" style="--b: 3.0; --l: 8;" id="g1-t"></div><div class="garantia-item" style="--b: 2.5; --l: 8;" id="g1-vis"></div>
+            <div class="garantia-item" style="--b: 3.5; --l: 11;" id="g2-q"></div><div class="garantia-item" style="--b: 3.5; --l: 13;" id="g2-v"></div><div class="garantia-item" style="--b: 3.0; --l: 13;" id="g2-t"></div><div class="garantia-item" style="--b: 2.5; --l: 13;" id="g2-vis"></div>
+            <div class="garantia-item" style="--b: 3.5; --l: 16;" id="g3-q"></div><div class="garantia-item" style="--b: 3.5; --l: 18;" id="g3-v"></div><div class="garantia-item" style="--b: 3.0; --l: 18;" id="g3-t"></div><div class="garantia-item" style="--b: 2.5; --l: 18;" id="g3-vis"></div>
         </div>
     </div>
 </div>
@@ -498,102 +538,41 @@
 
     // REGISTRO DO SERVICE WORKER (TORNA O SITE INSTALÁVEL COMO APP)
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then((reg) => {
-                console.log('Service Worker Registrado!', reg);
-            }).catch((err) => {
-                console.log('Falha no Service Worker', err);
-            });
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); });
     }
 
     // Inicialização Firebase 
     const firebaseConfig = {
-        apiKey: "AIzaSyCyHazeYmummjS5PUz6i_sUufAm7eakyGg",
-        authDomain: "cartaz-de-preco.firebaseapp.com",
-        projectId: "cartaz-de-preco",
-        storageBucket: "cartaz-de-preco.firebasestorage.app",
-        messagingSenderId: "104807769655",
-        appId: "1:104807769655:web:732e5b987cca8ea4a3c1b2"
+        apiKey: "AIzaSyCyHazeYmummjS5PUz6i_sUufAm7eakyGg", authDomain: "cartaz-de-preco.firebaseapp.com", projectId: "cartaz-de-preco",
+        storageBucket: "cartaz-de-preco.firebasestorage.app", messagingSenderId: "104807769655", appId: "1:104807769655:web:732e5b987cca8ea4a3c1b2"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
 
-    // ==========================================
-    // ESTADO E VARIÁVEIS GLOBAIS
-    // ==========================================
-    const ADMIN_EMAIL = "washington.wn8@gmail.com";
-    let currentUser = null;
-    let currentUserDoc = null;
-    let isAdmin = false;
-
-    let allProducts = [];
-    let currentFilteredProducts = [];
-    let currentPage = 1;
-    const ITEMS_PER_PAGE = 20;
-    
-    let allUsers = [];
-
-    let currentEditingId = null;
-    let currentPrintTargetId = null;
+    const ADMIN_EMAIL = "washington.wn8@gmail.com"; let currentUser = null; let currentUserDoc = null; let isAdmin = false;
+    let allProducts = []; let currentFilteredProducts = []; let currentPage = 1; const ITEMS_PER_PAGE = 20;
+    let allUsers = []; let currentEditingId = null; let currentPrintTargetId = null;
 
     const FATORES = {
         carne: { 1: 1.0690, 2: 0.5523, 3: 0.3804, 4: 0.2946, 5: 0.2432, 6: 0.2091, 7: 0.1849, 8: 0.1668, 9: 0.1528, 10: 0.1417, 11: 0.1327, 12: 0.1252 },
         cartao_fator: { 1: 1.0292, 2: 0.5220, 3: 0.3530, 4: 0.2685, 5: 0.2179, 6: 0.1841, 7: 0.1600, 8: 0.1420, 9: 0.1280, 10: 0.1168, 11: 0.1076, 12: 0.1000 }
     };
 
-    // ==========================================
-    // DECLARAÇÃO GLOBAL DE FUNÇÕES (MÁXIMA SEGURANÇA NO ESCOPO)
-    // ==========================================
-    window.parseMoney = function(str) {
-        if (!str) return 0;
-        let clean = str.replace(/\./g, '').replace(',', '.');
-        return parseFloat(clean.replace(/[^\d.]/g, '')) || 0;
-    };
-
+    // FUNÇÕES GLOBAIS
+    window.parseMoney = function(str) { if (!str) return 0; let clean = str.replace(/\./g, '').replace(',', '.'); return parseFloat(clean.replace(/[^\d.]/g, '')) || 0; };
     window.formatMoney = function(num) { return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
-
-    window.showToast = function(msg, type='success') {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.className = type === 'success' ? 'success show' : 'error show';
-        setTimeout(() => { t.classList.remove('show'); }, 3000);
-    };
-
-    window.showScreen = function(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-    };
-
-    window.toggleAuthMode = function(mode) {
-        document.getElementById('login-box').style.display = mode === 'login' ? 'block' : 'none';
-        document.getElementById('register-box').style.display = mode === 'register' ? 'block' : 'none';
-    };
-
-    window.switchTab = function(tab) {
-        document.getElementById('btn-tab-produtos').classList.remove('active');
-        document.getElementById('btn-tab-usuarios').classList.remove('active');
-        document.getElementById('tab-produtos').classList.remove('active');
-        document.getElementById('tab-usuarios').classList.remove('active');
-
-        document.getElementById('btn-tab-' + tab).classList.add('active');
-        document.getElementById('tab-' + tab).classList.add('active');
-    };
-
+    window.showToast = function(msg, type='success') { const t = document.getElementById('toast'); t.innerText = msg; t.className = type === 'success' ? 'success show' : 'error show'; setTimeout(() => { t.classList.remove('show'); }, 3000); };
+    window.showScreen = function(screenId) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(screenId).classList.add('active'); };
+    window.toggleAuthMode = function(mode) { document.getElementById('login-box').style.display = mode === 'login' ? 'block' : 'none'; document.getElementById('register-box').style.display = mode === 'register' ? 'block' : 'none'; };
+    window.switchTab = function(tab) { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); document.getElementById('btn-tab-' + tab).classList.add('active'); document.getElementById('tab-' + tab).classList.add('active'); };
     window.getTextVal = function(id) { const el = document.getElementById(id); return el ? el.value : ""; };
     window.setSafeText = function(id, text) { const el = document.getElementById(id); if (el) el.innerText = text || ""; };
     window.setInputVal = function(id, val) { const el = document.getElementById(id); if(el) el.value = val || ""; };
 
-    // ==========================================
     // AUTENTICAÇÃO E PERMISSÕES
-    // ==========================================
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            currentUser = user;
-            isAdmin = (user.email === ADMIN_EMAIL);
-            
+            currentUser = user; isAdmin = (user.email === ADMIN_EMAIL);
             try {
                 const userDocSnap = await getDoc(doc(db, "users", user.uid));
                 if (userDocSnap.exists()) {
@@ -601,261 +580,52 @@
                     if (isAdmin || currentUserDoc.status === 'approved') {
                         const primeiroNome = currentUserDoc.nome ? currentUserDoc.nome.split(' ')[0] : user.email.split('@')[0];
                         document.getElementById('user-display-name').innerText = "Olá, " + primeiroNome;
-                        setupDashboardBasedOnRole();
-                        window.showScreen('dashboard-screen');
-                        window.loadProducts();
-                        if (isAdmin) window.loadUsers();
+                        setupDashboardBasedOnRole(); window.showScreen('dashboard-screen'); window.loadProducts(); if (isAdmin) window.loadUsers();
                     } else { window.showScreen('pending-screen'); }
                 } else {
-                    if(isAdmin) {
-                        await setDoc(doc(db, "users", user.uid), { nome: "Administrador", email: user.email, status: 'approved', criadoEm: new Date().toISOString() });
-                        document.getElementById('user-display-name').innerText = "Olá, Admin";
-                        setupDashboardBasedOnRole(); window.showScreen('dashboard-screen'); window.loadProducts(); window.loadUsers();
-                    } else { window.showScreen('pending-screen'); }
+                    if(isAdmin) { await setDoc(doc(db, "users", user.uid), { nome: "Administrador", email: user.email, status: 'approved', criadoEm: new Date().toISOString() }); document.getElementById('user-display-name').innerText = "Olá, Admin"; setupDashboardBasedOnRole(); window.showScreen('dashboard-screen'); window.loadProducts(); window.loadUsers(); } else { window.showScreen('pending-screen'); }
                 }
             } catch(e) { window.showScreen('auth-screen'); }
-        } else {
-            currentUser = null; isAdmin = false; currentUserDoc = null; window.showScreen('auth-screen');
-        }
+        } else { currentUser = null; isAdmin = false; currentUserDoc = null; window.showScreen('auth-screen'); }
     });
 
     function setupDashboardBasedOnRole() {
-        if (isAdmin) {
-            document.getElementById('admin-users-manager').style.display = 'block';
-            document.getElementById('standard-user-profile').style.display = 'none';
-        } else {
-            document.getElementById('admin-users-manager').style.display = 'none';
-            document.getElementById('standard-user-profile').style.display = 'block';
-            window.setInputVal('prof-nome', currentUserDoc.nome); window.setInputVal('prof-whatsapp', currentUserDoc.whatsapp);
-            window.setInputVal('prof-filial', currentUserDoc.filial); window.setInputVal('prof-email', currentUserDoc.email);
-        }
+        if (isAdmin) { document.getElementById('admin-users-manager').style.display = 'block'; document.getElementById('standard-user-profile').style.display = 'none'; } else { document.getElementById('admin-users-manager').style.display = 'none'; document.getElementById('standard-user-profile').style.display = 'block'; window.setInputVal('prof-nome', currentUserDoc.nome); window.setInputVal('prof-whatsapp', currentUserDoc.whatsapp); window.setInputVal('prof-filial', currentUserDoc.filial); window.setInputVal('prof-email', currentUserDoc.email); }
     }
 
-    window.doLogin = async function() {
-        const e = window.getTextVal('login-email'); const p = window.getTextVal('login-pass');
-        if(!e || !p) return window.showToast('Preencha email e senha', 'error');
-        window.showScreen('loading-screen');
-        try { await signInWithEmailAndPassword(auth, e, p); } 
-        catch (err) { window.showScreen('auth-screen'); window.showToast('Senha ou email incorretos', 'error'); }
-    };
+    window.doLogin = async function() { const e = window.getTextVal('login-email'); const p = window.getTextVal('login-pass'); if(!e || !p) return window.showToast('Preencha email e senha', 'error'); window.showScreen('loading-screen'); try { await signInWithEmailAndPassword(auth, e, p); } catch (err) { window.showScreen('auth-screen'); window.showToast('Senha ou email incorretos', 'error'); } };
+    window.doRegister = async function() { const n = window.getTextVal('reg-nome'); const w = window.getTextVal('reg-whatsapp'); const e = window.getTextVal('reg-email'); const f = window.getTextVal('reg-filial'); const p = window.getTextVal('reg-pass'); const p2 = window.getTextVal('reg-pass-conf'); if(!n || !e || !p) return window.showToast('Nome, E-mail e Senha são obrigatórios', 'error'); if(p !== p2) return window.showToast('As senhas não coincidem', 'error'); window.showScreen('loading-screen'); try { const userCredential = await createUserWithEmailAndPassword(auth, e, p); await setDoc(doc(db, "users", userCredential.user.uid), { nome: n, whatsapp: w, email: e, filial: f, status: 'pending', criadoEm: new Date().toISOString() }); } catch (err) { window.showScreen('auth-screen'); window.showToast('Erro ao criar conta: ' + err.message, 'error'); } };
+    window.doLogout = async function() { window.setInputVal('login-email', ''); window.setInputVal('login-pass', ''); await signOut(auth); };
+    window.updateProfile = async function() { if(isAdmin) return; const n = window.getTextVal('prof-nome'); const w = window.getTextVal('prof-whatsapp'); const f = window.getTextVal('prof-filial'); try { await updateDoc(doc(db, "users", currentUser.uid), { nome: n, whatsapp: w, filial: f }); currentUserDoc.nome = n; currentUserDoc.whatsapp = w; currentUserDoc.filial = f; document.getElementById('user-display-name').innerText = "Olá, " + n.split(' ')[0]; window.showToast('Perfil atualizado com sucesso!'); } catch(e) { window.showToast('Erro ao atualizar perfil', 'error'); } };
 
-    window.doRegister = async function() {
-        const n = window.getTextVal('reg-nome'); const w = window.getTextVal('reg-whatsapp');
-        const e = window.getTextVal('reg-email'); const f = window.getTextVal('reg-filial');
-        const p = window.getTextVal('reg-pass'); const p2 = window.getTextVal('reg-pass-conf');
+    // USUÁRIOS (ADMIN)
+    window.loadUsers = async function() { if (!isAdmin) return; try { const querySnapshot = await getDocs(collection(db, "users")); allUsers = []; querySnapshot.forEach((doc) => { allUsers.push({ id: doc.id, ...doc.data() }); }); window.renderUsersTable(); } catch(e) {} };
+    window.renderUsersTable = function() { const tbody = document.getElementById('users-table-body'); tbody.innerHTML = ''; allUsers.forEach(u => { const isMe = u.email === ADMIN_EMAIL; const statusClass = u.status === 'approved' ? 'approved' : 'pending'; const statusText = u.status === 'approved' ? 'Aprovado' : 'Aguardando Liberação'; const tr = document.createElement('tr'); tr.innerHTML = `<td><strong>${u.nome || '-'}</strong></td><td>${u.email}</td><td>${u.filial || '-'}</td><td>${u.whatsapp || '-'}</td><td><span class="status-badge ${statusClass}">${isMe ? 'Admin' : statusText}</span></td><td class="action-btns">${!isMe ? `${u.status === 'pending' ? `<button class="btn-zenir" style="background:#28a745;" onclick="window.toggleUserStatus('${u.id}', 'approved')">Aprovar Acesso</button>` : `<button class="btn-outline" style="color:var(--zenir-red); border-color:var(--zenir-red);" onclick="window.toggleUserStatus('${u.id}', 'pending')">Bloquear</button>`} <button class="btn-zenir red" onclick="window.askDeleteUser('${u.id}')">🗑️</button>` : '<span style="font-size:0.8rem; color:#888;">Nenhuma ação</span>'}</td>`; tbody.appendChild(tr); }); };
+    window.toggleUserStatus = async function(uid, newStatus) { try { await updateDoc(doc(db, "users", uid), { status: newStatus }); window.showToast(newStatus === 'approved' ? 'Acesso liberado!' : 'Acesso bloqueado!'); window.loadUsers(); } catch(e) {} };
+    let deleteUserTarget = null; window.askDeleteUser = function(uid) { deleteUserTarget = uid; document.getElementById('confirmTitle').innerText = 'Excluir Usuário'; document.getElementById('confirmText').innerText = 'Tem certeza que deseja excluir os dados deste usuário?'; document.getElementById('confirmBtnAction').onclick = window.executeDeleteUser; document.getElementById('confirmModal').classList.add('active'); };
+    window.executeDeleteUser = async function() { if(!deleteUserTarget) return; try { await deleteDoc(doc(db, "users", deleteUserTarget)); window.showToast('Usuário excluído com sucesso.'); window.loadUsers(); } catch(e) {} window.closeConfirmModal(); };
 
-        if(!n || !e || !p) return window.showToast('Nome, E-mail e Senha são obrigatórios', 'error');
-        if(p !== p2) return window.showToast('As senhas não coincidem', 'error');
-
-        window.showScreen('loading-screen');
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, e, p);
-            await setDoc(doc(db, "users", userCredential.user.uid), { nome: n, whatsapp: w, email: e, filial: f, status: 'pending', criadoEm: new Date().toISOString() });
-        } catch (err) { window.showScreen('auth-screen'); window.showToast('Erro ao criar conta: ' + err.message, 'error'); }
-    };
-
-    window.doLogout = async function() { 
-        window.setInputVal('login-email', ''); window.setInputVal('login-pass', '');
-        await signOut(auth); 
-    };
-
-    window.updateProfile = async function() {
-        if(isAdmin) return;
-        const n = window.getTextVal('prof-nome'); const w = window.getTextVal('prof-whatsapp'); const f = window.getTextVal('prof-filial');
-        try {
-            await updateDoc(doc(db, "users", currentUser.uid), { nome: n, whatsapp: w, filial: f });
-            currentUserDoc.nome = n; currentUserDoc.whatsapp = w; currentUserDoc.filial = f;
-            document.getElementById('user-display-name').innerText = "Olá, " + n.split(' ')[0];
-            window.showToast('Perfil atualizado com sucesso!');
-        } catch(e) { window.showToast('Erro ao atualizar perfil', 'error'); }
-    };
-
-    // ==========================================
-    // ABA DE USUÁRIOS (SOMENTE ADMIN)
-    // ==========================================
-    window.loadUsers = async function() {
-        if (!isAdmin) return;
-        try {
-            const querySnapshot = await getDocs(collection(db, "users"));
-            allUsers = []; querySnapshot.forEach((doc) => { allUsers.push({ id: doc.id, ...doc.data() }); });
-            window.renderUsersTable();
-        } catch(e) {}
-    };
-
-    window.renderUsersTable = function() {
-        const tbody = document.getElementById('users-table-body');
-        tbody.innerHTML = '';
-        allUsers.forEach(u => {
-            const isMe = u.email === ADMIN_EMAIL;
-            const statusClass = u.status === 'approved' ? 'approved' : 'pending';
-            const statusText = u.status === 'approved' ? 'Aprovado' : 'Aguardando Liberação';
-            
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${u.nome || '-'}</strong></td><td>${u.email}</td><td>${u.filial || '-'}</td><td>${u.whatsapp || '-'}</td>
-                <td><span class="status-badge ${statusClass}">${isMe ? 'Admin' : statusText}</span></td>
-                <td class="action-btns">
-                    ${!isMe ? `
-                        ${u.status === 'pending' ? `<button class="btn-zenir" style="background:#28a745;" onclick="window.toggleUserStatus('${u.id}', 'approved')">Aprovar Acesso</button>` : `<button class="btn-outline" style="color:var(--zenir-red); border-color:var(--zenir-red);" onclick="window.toggleUserStatus('${u.id}', 'pending')">Bloquear</button>`}
-                        <button class="btn-zenir red" onclick="window.askDeleteUser('${u.id}')">🗑️</button>
-                    ` : '<span style="font-size:0.8rem; color:#888;">Nenhuma ação</span>'}
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    };
-
-    window.toggleUserStatus = async function(uid, newStatus) {
-        try { await updateDoc(doc(db, "users", uid), { status: newStatus }); window.showToast(newStatus === 'approved' ? 'Acesso liberado!' : 'Acesso bloqueado!'); window.loadUsers(); } catch(e) {}
-    };
-
-    let deleteUserTarget = null;
-    window.askDeleteUser = function(uid) {
-        deleteUserTarget = uid;
-        document.getElementById('confirmTitle').innerText = 'Excluir Usuário'; document.getElementById('confirmText').innerText = 'Tem certeza que deseja excluir os dados deste usuário?';
-        document.getElementById('confirmBtnAction').onclick = window.executeDeleteUser; document.getElementById('confirmModal').classList.add('active');
-    };
-
-    window.executeDeleteUser = async function() {
-        if(!deleteUserTarget) return;
-        try { await deleteDoc(doc(db, "users", deleteUserTarget)); window.showToast('Usuário excluído com sucesso.'); window.loadUsers(); } catch(e) {}
-        window.closeConfirmModal();
-    };
-
-    // ==========================================
-    // PRODUTOS (DASHBOARD)
-    // ==========================================
-    window.loadProducts = async function() {
-        if (!currentUser) return;
-        try {
-            const querySnapshot = await getDocs(collection(db, "produtos"));
-            allProducts = []; querySnapshot.forEach((doc) => { allProducts.push({ id: doc.id, ...doc.data() }); });
-            allProducts.sort((a, b) => { return (parseInt(a.codigo) || 0) - (parseInt(b.codigo) || 0); });
-            currentFilteredProducts = [...allProducts]; currentPage = 1; window.renderTable();
-        } catch(e) { window.showToast('Erro ao carregar produtos.', 'error'); }
-    };
-
-    window.filterTable = function() {
-        const term = window.getTextVal('search-input').toLowerCase();
-        currentFilteredProducts = allProducts.filter(p => (p.codigo || "").toLowerCase().includes(term) || (p.produto || "").toLowerCase().includes(term) || (p.marca || "").toLowerCase().includes(term));
-        currentPage = 1; window.renderTable();
-    };
-
-    window.renderTable = function() {
-        const tbody = document.getElementById('table-body');
-        tbody.innerHTML = '';
-        if(currentFilteredProducts.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 30px;">Nenhum produto encontrado.</td></tr>'; window.renderPagination(0); return; }
-
-        const totalPages = Math.ceil(currentFilteredProducts.length / ITEMS_PER_PAGE);
-        if(currentPage > totalPages) currentPage = totalPages;
-        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-        const pageData = currentFilteredProducts.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-
-        pageData.forEach(p => {
-            const tr = document.createElement('tr');
-            const deleteBtnHtml = isAdmin ? `<button class="btn-zenir red" onclick="window.askDeleteProduct('${p.id}')">🗑️</button>` : '';
-            tr.innerHTML = `
-                <td><strong>${p.codigo || '-'}</strong></td><td>${p.produto || '-'}</td><td>${p.ref || '-'}</td><td>${p.marca || '-'}</td>
-                <td style="color:var(--zenir-blue); font-weight:bold;">R$ ${p.v_vis || '-'}</td>
-                <td class="action-btns">
-                    <button class="btn-outline" onclick="window.quickPrintSetup('${p.id}')">🖨️ Imprimir</button>
-                    <button class="btn-zenir" style="background:#f39c12;" onclick="window.openEditor('${p.id}')">✏️ Editar</button>
-                    ${deleteBtnHtml}
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-        window.renderPagination(totalPages);
-    };
-
-    window.renderPagination = function(totalPages) {
-        const container = document.getElementById('pagination-container');
-        container.innerHTML = ''; if (totalPages <= 1) return;
-        let pagesToDisplay = new Set([1, totalPages]);
-        for(let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) { pagesToDisplay.add(i); }
-        const sortedPages = Array.from(pagesToDisplay).sort((a,b) => a - b);
-        let lastAdded = 0;
-        sortedPages.forEach(p => {
-            if (p - lastAdded > 1) {
-                const dots = document.createElement('button'); dots.className = 'page-btn dots'; dots.innerText = '...'; dots.onclick = () => window.openPagesModal(totalPages); container.appendChild(dots);
-            }
-            const btn = document.createElement('button'); btn.className = `page-btn ${p === currentPage ? 'active' : ''}`; btn.innerText = p; btn.onclick = () => { currentPage = p; window.renderTable(); }; container.appendChild(btn);
-            lastAdded = p;
-        });
-    };
-
-    window.openPagesModal = function(totalPages) {
-        const grid = document.getElementById('pages-grid-container'); grid.innerHTML = '';
-        for(let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement('button'); btn.className = `page-btn ${i === currentPage ? 'active' : ''}`; btn.innerText = i; btn.onclick = () => { currentPage = i; window.renderTable(); window.closePagesModal(); }; grid.appendChild(btn);
-        }
-        document.getElementById('pagesModal').classList.add('active');
-    };
-
+    // PRODUTOS
+    window.loadProducts = async function() { if (!currentUser) return; try { const querySnapshot = await getDocs(collection(db, "produtos")); allProducts = []; querySnapshot.forEach((doc) => { allProducts.push({ id: doc.id, ...doc.data() }); }); allProducts.sort((a, b) => { return (parseInt(a.codigo) || 0) - (parseInt(b.codigo) || 0); }); currentFilteredProducts = [...allProducts]; currentPage = 1; window.renderTable(); } catch(e) { window.showToast('Erro ao carregar produtos.', 'error'); } };
+    window.filterTable = function() { const term = window.getTextVal('search-input').toLowerCase(); currentFilteredProducts = allProducts.filter(p => (p.codigo || "").toLowerCase().includes(term) || (p.produto || "").toLowerCase().includes(term) || (p.marca || "").toLowerCase().includes(term)); currentPage = 1; window.renderTable(); };
+    window.renderTable = function() { const tbody = document.getElementById('table-body'); tbody.innerHTML = ''; if(currentFilteredProducts.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 30px;">Nenhum produto encontrado.</td></tr>'; window.renderPagination(0); return; } const totalPages = Math.ceil(currentFilteredProducts.length / ITEMS_PER_PAGE); if(currentPage > totalPages) currentPage = totalPages; const startIdx = (currentPage - 1) * ITEMS_PER_PAGE; const pageData = currentFilteredProducts.slice(startIdx, startIdx + ITEMS_PER_PAGE); pageData.forEach(p => { const tr = document.createElement('tr'); const deleteBtnHtml = isAdmin ? `<button class="btn-zenir red" onclick="window.askDeleteProduct('${p.id}')">🗑️</button>` : ''; tr.innerHTML = `<td><strong>${p.codigo || '-'}</strong></td><td>${p.produto || '-'}</td><td>${p.ref || '-'}</td><td>${p.marca || '-'}</td><td style="color:var(--zenir-blue); font-weight:bold;">R$ ${p.v_vis || '-'}</td><td class="action-btns"><button class="btn-outline" onclick="window.quickPrintSetup('${p.id}')">🖨️ Imprimir</button><button class="btn-zenir" style="background:#f39c12;" onclick="window.openEditor('${p.id}')">✏️ Editar</button>${deleteBtnHtml}</td>`; tbody.appendChild(tr); }); window.renderPagination(totalPages); };
+    window.renderPagination = function(totalPages) { const container = document.getElementById('pagination-container'); container.innerHTML = ''; if (totalPages <= 1) return; let pagesToDisplay = new Set([1, totalPages]); for(let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) { pagesToDisplay.add(i); } const sortedPages = Array.from(pagesToDisplay).sort((a,b) => a - b); let lastAdded = 0; sortedPages.forEach(p => { if (p - lastAdded > 1) { const dots = document.createElement('button'); dots.className = 'page-btn dots'; dots.innerText = '...'; dots.onclick = () => window.openPagesModal(totalPages); container.appendChild(dots); } const btn = document.createElement('button'); btn.className = `page-btn ${p === currentPage ? 'active' : ''}`; btn.innerText = p; btn.onclick = () => { currentPage = p; window.renderTable(); }; container.appendChild(btn); lastAdded = p; }); };
+    window.openPagesModal = function(totalPages) { const grid = document.getElementById('pages-grid-container'); grid.innerHTML = ''; for(let i = 1; i <= totalPages; i++) { const btn = document.createElement('button'); btn.className = `page-btn ${i === currentPage ? 'active' : ''}`; btn.innerText = i; btn.onclick = () => { currentPage = i; window.renderTable(); window.closePagesModal(); }; grid.appendChild(btn); } document.getElementById('pagesModal').classList.add('active'); };
     window.closePagesModal = function() { document.getElementById('pagesModal').classList.remove('active'); };
-
-    let deleteProductTarget = null;
-    window.askDeleteProduct = function(id) {
-        if(!isAdmin) return;
-        deleteProductTarget = id;
-        document.getElementById('confirmTitle').innerText = 'Excluir Produto'; document.getElementById('confirmText').innerText = 'Tem certeza que deseja excluir permanentemente este cartaz?';
-        document.getElementById('confirmBtnAction').onclick = window.executeDeleteProduct; document.getElementById('confirmModal').classList.add('active');
-    };
+    let deleteProductTarget = null; window.askDeleteProduct = function(id) { if(!isAdmin) return; deleteProductTarget = id; document.getElementById('confirmTitle').innerText = 'Excluir Produto'; document.getElementById('confirmText').innerText = 'Tem certeza que deseja excluir permanentemente este cartaz?'; document.getElementById('confirmBtnAction').onclick = window.executeDeleteProduct; document.getElementById('confirmModal').classList.add('active'); };
     window.closeConfirmModal = function() { document.getElementById('confirmModal').classList.remove('active'); };
-    window.executeDeleteProduct = async function() {
-        if(!deleteProductTarget) return;
-        try { await deleteDoc(doc(db, "produtos", deleteProductTarget)); window.showToast('Produto excluído com sucesso.'); window.loadProducts(); } catch(e) {}
-        window.closeConfirmModal();
-    };
+    window.executeDeleteProduct = async function() { if(!deleteProductTarget) return; try { await deleteDoc(doc(db, "produtos", deleteProductTarget)); window.showToast('Produto excluído com sucesso.'); window.loadProducts(); } catch(e) {} window.closeConfirmModal(); };
 
-    // ==========================================
-    // EDITOR <-> BANCO E GERADOR
-    // ==========================================
-    window.openEditor = function(id) {
-        currentEditingId = id;
-        if (id) { const prod = allProducts.find(p => p.id === id); if(prod) window.populateForm(prod); } else { window.clearForm(); }
-        window.showScreen('editor-screen'); setTimeout(() => { window.autoCalcular(); window.toggleCartazTipo(); window.applyAdjustments(); }, 100);
-    };
-
+    // EDITOR 
+    window.openEditor = function(id) { currentEditingId = id; if (id) { const prod = allProducts.find(p => p.id === id); if(prod) window.populateForm(prod); } else { window.clearForm(); } window.showScreen('editor-screen'); setTimeout(() => { window.autoCalcular(); window.toggleCartazTipo(); window.applyAdjustments(); }, 100); };
     window.closeEditor = function() { currentEditingId = null; window.showScreen('dashboard-screen'); };
+    window.getFormData = function() { return { tamanho: window.getTextVal('in-tamanho-cartaz'), tipo: window.getTextVal('in-tipo-cartaz'), validade: window.getTextVal('in-validade'), produto: window.getTextVal('in-produto'), ref: window.getTextVal('in-ref'), marca: window.getTextVal('in-marca'), carac: window.getTextVal('in-carac'), codigo: window.getTextVal('in-codigo'), condicao: window.getTextVal('in-condicao'), v_vis: window.getTextVal('in-v-vis'), parcelas: window.getTextVal('in-parcelas'), v_parc: window.getTextVal('in-v-parc'), tot_praz: window.getTextVal('in-tot-praz'), g1: { q: window.getTextVal('in-g1-q'), v: window.getTextVal('in-g1-v'), t: window.getTextVal('in-g1-t') }, g2: { q: window.getTextVal('in-g2-q'), v: window.getTextVal('in-g2-v'), t: window.getTextVal('in-g2-t') }, g3: { q: window.getTextVal('in-g3-q'), v: window.getTextVal('in-g3-v'), t: window.getTextVal('in-g3-t') }, ajustes: { size: window.getTextVal('adj-size'), spacing: window.getTextVal('adj-spacing'), x: window.getTextVal('adj-x'), y: window.getTextVal('adj-y') }, atualizadoEm: new Date().toISOString() }; };
+    window.populateForm = function(data) { window.setInputVal('in-tamanho-cartaz', data.tamanho || 'A4'); window.setInputVal('in-tipo-cartaz', data.tipo || 'padrao'); window.setInputVal('in-validade', data.validade); window.setInputVal('in-produto', data.produto); window.setInputVal('in-ref', data.ref); window.setInputVal('in-marca', data.marca); window.setInputVal('in-carac', data.carac); window.setInputVal('in-codigo', data.codigo); window.setInputVal('in-condicao', data.condicao || 'carne'); window.setInputVal('in-v-vis', data.v_vis); window.setInputVal('in-parcelas', data.parcelas); window.setInputVal('in-v-parc', data.v_parc); window.setInputVal('in-tot-praz', data.tot_praz); if(data.g1) { window.setInputVal('in-g1-q', data.g1.q); window.setInputVal('in-g1-v', data.g1.v); window.setInputVal('in-g1-t', data.g1.t); } if(data.g2) { window.setInputVal('in-g2-q', data.g2.q); window.setInputVal('in-g2-v', data.g2.v); window.setInputVal('in-g2-t', data.g2.t); } if(data.g3) { window.setInputVal('in-g3-q', data.g3.q); window.setInputVal('in-g3-v', data.g3.v); window.setInputVal('in-g3-t', data.g3.t); } if(data.ajustes) { window.setInputVal('adj-size', data.ajustes.size || 9); window.setInputVal('adj-spacing', data.ajustes.spacing || -0.55); window.setInputVal('adj-x', data.ajustes.x || 0); window.setInputVal('adj-y', data.ajustes.y || 0); } else { window.resetAdjustments(); } };
+    window.clearForm = function() { const ids = ['in-validade','in-produto','in-ref','in-marca','in-carac','in-codigo','in-v-vis','in-parcelas','in-v-parc','in-tot-praz','in-g1-q','in-g1-v','in-g1-t','in-g2-q','in-g2-v','in-g2-t','in-g3-q','in-g3-v','in-g3-t']; ids.forEach(id => window.setInputVal(id, '')); window.setInputVal('in-tamanho-cartaz', 'A4'); window.setInputVal('in-tipo-cartaz', 'padrao'); window.setInputVal('in-condicao', 'carne'); window.resetAdjustments(); };
+    window.saveProduct = async function() { const data = window.getFormData(); if(!data.produto || !data.codigo) return window.showToast('Preencha pelo menos Produto e Código', 'error'); try { if (currentEditingId) { await updateDoc(doc(db, "produtos", currentEditingId), data); window.showToast('Produto atualizado!'); } else { await addDoc(collection(db, "produtos"), data); window.showToast('Novo produto cadastrado!'); } window.closeEditor(); window.loadProducts(); } catch(e) {} };
 
-    window.getFormData = function() {
-        return {
-            tamanho: window.getTextVal('in-tamanho-cartaz'), tipo: window.getTextVal('in-tipo-cartaz'), validade: window.getTextVal('in-validade'),
-            produto: window.getTextVal('in-produto'), ref: window.getTextVal('in-ref'), marca: window.getTextVal('in-marca'), carac: window.getTextVal('in-carac'),
-            codigo: window.getTextVal('in-codigo'), condicao: window.getTextVal('in-condicao'), v_vis: window.getTextVal('in-v-vis'),
-            parcelas: window.getTextVal('in-parcelas'), v_parc: window.getTextVal('in-v-parc'), tot_praz: window.getTextVal('in-tot-praz'),
-            g1: { q: window.getTextVal('in-g1-q'), v: window.getTextVal('in-g1-v'), t: window.getTextVal('in-g1-t') }, g2: { q: window.getTextVal('in-g2-q'), v: window.getTextVal('in-g2-v'), t: window.getTextVal('in-g2-t') }, g3: { q: window.getTextVal('in-g3-q'), v: window.getTextVal('in-g3-v'), t: window.getTextVal('in-g3-t') },
-            ajustes: { size: window.getTextVal('adj-size'), spacing: window.getTextVal('adj-spacing'), x: window.getTextVal('adj-x'), y: window.getTextVal('adj-y') }, atualizadoEm: new Date().toISOString()
-        };
-    };
-
-    window.populateForm = function(data) {
-        window.setInputVal('in-tamanho-cartaz', data.tamanho || 'A4'); window.setInputVal('in-tipo-cartaz', data.tipo || 'padrao');
-        window.setInputVal('in-validade', data.validade); window.setInputVal('in-produto', data.produto); window.setInputVal('in-ref', data.ref);
-        window.setInputVal('in-marca', data.marca); window.setInputVal('in-carac', data.carac); window.setInputVal('in-codigo', data.codigo);
-        window.setInputVal('in-condicao', data.condicao || 'carne'); window.setInputVal('in-v-vis', data.v_vis);
-        window.setInputVal('in-parcelas', data.parcelas); window.setInputVal('in-v-parc', data.v_parc); window.setInputVal('in-tot-praz', data.tot_praz);
-        if(data.g1) { window.setInputVal('in-g1-q', data.g1.q); window.setInputVal('in-g1-v', data.g1.v); window.setInputVal('in-g1-t', data.g1.t); }
-        if(data.g2) { window.setInputVal('in-g2-q', data.g2.q); window.setInputVal('in-g2-v', data.g2.v); window.setInputVal('in-g2-t', data.g2.t); }
-        if(data.g3) { window.setInputVal('in-g3-q', data.g3.q); window.setInputVal('in-g3-v', data.g3.v); window.setInputVal('in-g3-t', data.g3.t); }
-        if(data.ajustes) { window.setInputVal('adj-size', data.ajustes.size || 9); window.setInputVal('adj-spacing', data.ajustes.spacing || -0.55); window.setInputVal('adj-x', data.ajustes.x || 0); window.setInputVal('adj-y', data.ajustes.y || 0); } else { window.resetAdjustments(); }
-    };
-
-    window.clearForm = function() {
-        const ids = ['in-validade','in-produto','in-ref','in-marca','in-carac','in-codigo','in-v-vis','in-parcelas','in-v-parc','in-tot-praz','in-g1-q','in-g1-v','in-g1-t','in-g2-q','in-g2-v','in-g2-t','in-g3-q','in-g3-v','in-g3-t'];
-        ids.forEach(id => window.setInputVal(id, '')); window.setInputVal('in-tamanho-cartaz', 'A4'); window.setInputVal('in-tipo-cartaz', 'padrao'); window.setInputVal('in-condicao', 'carne'); window.resetAdjustments();
-    };
-
-    window.saveProduct = async function() {
-        const data = window.getFormData(); if(!data.produto || !data.codigo) return window.showToast('Preencha pelo menos Produto e Código', 'error');
-        try { if (currentEditingId) { await updateDoc(doc(db, "produtos", currentEditingId), data); window.showToast('Produto atualizado!'); } else { await addDoc(collection(db, "produtos"), data); window.showToast('Novo produto cadastrado!'); } window.closeEditor(); window.loadProducts(); } catch(e) {}
-    };
-
-    window.quickPrintSetup = function(id) {
-        currentPrintTargetId = id; document.getElementById('quickPrintModal').classList.add('active'); const prod = allProducts.find(p => p.id === id); if(prod) { window.setInputVal('qp-tamanho', prod.tamanho || 'A4'); window.setInputVal('qp-tipo', prod.tipo || 'padrao'); }
-    };
-    
+    // IMPRESSÃO E MOBILE
+    window.quickPrintSetup = function(id) { currentPrintTargetId = id; document.getElementById('quickPrintModal').classList.add('active'); const prod = allProducts.find(p => p.id === id); if(prod) { window.setInputVal('qp-tamanho', prod.tamanho || 'A4'); window.setInputVal('qp-tipo', prod.tipo || 'padrao'); } };
     window.closeQuickPrint = function() { document.getElementById('quickPrintModal').classList.remove('active'); currentPrintTargetId = null; };
 
     window.executeQuickPrint = function() {
@@ -863,11 +633,18 @@
         window.populateForm(prod); const tam = window.getTextVal('qp-tamanho'); const tipo = window.getTextVal('qp-tipo');
         const cartaz = document.getElementById('cartaz'); cartaz.classList.remove('promocional', 'avista', 'padrao', 'size-A4', 'size-A5', 'size-A6'); cartaz.classList.add('size-' + tam);
         if (tipo === 'padrao') cartaz.classList.add('padrao'); else if (tipo === 'promocional') cartaz.classList.add('promocional'); else if (tipo === 'avista_padrao') cartaz.classList.add('avista', 'padrao'); else if (tipo === 'avista_promocional') cartaz.classList.add('avista', 'promocional');
-        window.autoCalcular(); window.update(); window.applyAdjustments(); window.closeQuickPrint(); setTimeout(() => { window.print(); }, 100); 
+        window.autoCalcular(); window.update(); window.applyAdjustments(); window.closeQuickPrint(); 
+        
+        window.showScreen('editor-screen');
+        setTimeout(() => { 
+            window.print(); 
+            setTimeout(() => { window.showScreen('dashboard-screen'); }, 1500); 
+        }, 800); 
     };
 
-    window.testPrint = function() { window.print(); };
+    window.testPrint = function() { setTimeout(() => { window.print(); }, 800); };
 
+    // PREÇOS E CENTAVOS SUSPENSOS
     window.autoCalcular = function() {
         const condicao = window.getTextVal('in-condicao'); const parcelasStr = window.getTextVal('in-parcelas'); const vistaStr = window.getTextVal('in-v-vis');
         if (!parcelasStr || !vistaStr) { window.update(); return; }
@@ -885,7 +662,17 @@
         if (!document.getElementById('field-produto')) return; 
         window.setSafeText('field-produto', window.getTextVal('in-produto')); window.setSafeText('field-validade', window.getTextVal('in-validade')); window.setSafeText('out-ref', window.getTextVal('in-ref')); window.setSafeText('out-marca', window.getTextVal('in-marca')); window.setSafeText('field-caracteristicas', window.getTextVal('in-carac')); window.setSafeText('field-codigo', window.getTextVal('in-codigo'));
         const parcelas = window.getTextVal('in-parcelas'); window.setSafeText('out-parcelas', parcelas ? parcelas + 'x' : '');
-        const cartaz = document.getElementById('cartaz'); if (cartaz.classList.contains('avista')) { window.setSafeText('field-valor-parcela', window.getTextVal('in-v-vis')); } else { window.setSafeText('field-valor-parcela', window.getTextVal('in-v-parc')); }
+        
+        const cartaz = document.getElementById('cartaz'); 
+        let rawPrice = cartaz.classList.contains('avista') ? window.getTextVal('in-v-vis') : window.getTextVal('in-v-parc');
+        if(!rawPrice) rawPrice = "0,00";
+        
+        const priceParts = rawPrice.split(',');
+        let intPart = priceParts[0];
+        let centsPart = priceParts.length > 1 ? "," + priceParts[1] : ",00";
+        
+        document.getElementById('field-valor-parcela').innerHTML = `<span class="int-part">${intPart}</span><span class="cents-part">${centsPart}</span>`;
+        
         const totalP = window.getTextVal('in-tot-praz'); window.setSafeText('out-tot-praz', totalP ? '= R$ ' + totalP : ''); const totalV = window.getTextVal('in-v-vis'); window.setSafeText('out-v-vis', totalV ? 'R$ ' + totalV : '');
         const condicao = window.getTextVal('in-condicao'); const pLabel = document.getElementById('field-prazo-label'); const pSub = document.getElementById('field-prazo-sublabel');
         if (pLabel && pSub) { if (condicao === 'carne') { pLabel.innerText = 'À PRAZO'; pSub.innerText = '6,9% a.m. e 122,71% a.a.'; pSub.style.display = 'block'; } else if (condicao === 'cartao_fator') { pLabel.innerText = 'NO CARTÃO'; pSub.innerText = '2,92% a.m. e 41,25% a.a.'; pSub.style.display = 'block'; } else if (condicao === 'cartao_sem_juros') { pLabel.innerText = 'NO CARTÃO'; pSub.innerText = 'sem juros'; pSub.style.display = 'block'; } }
@@ -912,4 +699,5 @@
 </script>
 </body>
 </html>
+
 
