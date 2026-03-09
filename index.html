@@ -133,7 +133,6 @@
 
         .field { position: absolute; left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); line-height: 1.2; word-wrap: break-word; }
         
-        /* ALTERAÇÕES DE TAMANHO E POSICIONAMENTO AQUI */
         #field-produto { top: calc(4.4cm * var(--scale)); font-size: calc(1.2cm * var(--scale)); font-weight: 700; line-height: 1.1; }
         #field-validade { top: calc(4.4cm * var(--scale)); font-family: 'Lato', sans-serif; font-size: calc(9pt * var(--scale)); font-weight: 400; text-align: right; color: var(--zenir-red); display: none; }
         #field-ref-marca { top: calc(5.7cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 400; line-height: 1.1; }
@@ -143,17 +142,30 @@
         
         #price-block { position: absolute; top: calc(8.5cm * var(--scale)); left: 0; width: 100%; height: calc(9.5cm * var(--scale)); }
         #field-parcelas-container { position: absolute; left: calc(1cm * var(--scale)); bottom: calc(1.1cm * var(--scale)); display: flex; flex-direction: column; line-height: 0.85; font-size: calc(2.2cm * var(--scale)); font-weight: 700; transform: scaleX(0.85); transform-origin: left bottom; text-align: center; }
-        #field-valor-parcela { position: absolute; left: 0; width: 100%; bottom: 0; text-align: center; transform: scaleX(0.70); transform-origin: center bottom; line-height: 0.8; font-weight: 700; font-size: calc(var(--val-font-size) * 1cm * var(--scale)); letter-spacing: calc(var(--val-letter-spacing) * 1cm * var(--scale)); margin-left: calc(var(--val-x) * 1cm * var(--scale)); margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); }
         
-        /* CLASSE PARA POSICIONAMENTO DOS CENTAVOS SUPERIORES COM NOVO ESPAÇAMENTO */
+        #field-valor-parcela { 
+            position: absolute; left: 0; width: 100%; bottom: 0; text-align: center; 
+            transform: scaleX(0.70); transform-origin: center bottom; line-height: 0.8; 
+            font-weight: 700; font-size: calc(var(--val-font-size) * 1cm * var(--scale)); 
+            letter-spacing: calc(var(--val-letter-spacing) * 1cm * var(--scale)); 
+            margin-left: calc(var(--val-x) * 1cm * var(--scale)); 
+            margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); 
+            white-space: nowrap; /* Trava para nunca quebrar a linha e subir sobrepondo */
+        }
+        
+        /* CLASSES PARA ESPAÇAMENTO REFINADO VÍRGULA/CENTAVOS */
         .cents-superscript { 
             font-size: 50%; 
             vertical-align: super; 
             line-height: 0; 
             position: relative; 
             top: -0.2em; 
-            margin-left: 0.05em; /* Leve afastamento do número principal */
-            letter-spacing: -0.05em; /* Neutraliza o esmagamento (-0.55cm) que vinha do bloco pai */
+            letter-spacing: normal; /* Remove o esmagamento global para esta área */
+            margin-left: 0.03em; /* Aproximado um pouco mais a vírgula do número principal */
+        }
+        .cents-numbers {
+            margin-left: 0.02em; /* Aproximado a vírgula dos centavos (menor espaço) */
+            letter-spacing: -0.05em; /* Aproximado os números dos centavos entre si sem colar */
         }
 
         #field-totais { position: absolute; top: calc(20.2cm * var(--scale)); left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); border-top: calc(2px * var(--scale)) solid #000; border-bottom: calc(2px * var(--scale)) solid #000; padding: calc(0.1cm * var(--scale)) 0; display: flex; align-items: baseline; justify-content: center; }
@@ -169,10 +181,22 @@
 
         .page.promocional .garantia-item { margin-bottom: calc(0.85cm * var(--scale)); }
         .page.promocional #field-validade { display: block; }
+        
         .page.avista #field-parcelas-container { display: none !important; }
         .page.avista #field-totais { border: none !important; left: 0 !important; right: 0 !important; width: 100% !important; }
         .page.avista #out-tot-praz, .page.avista #prazo-text-group, .page.avista .separator, .page.avista #out-v-vis { display: none !important; }
         .page.avista #field-vista-label { font-size: calc(1.35cm * var(--scale)) !important; }
+
+        /* CORREÇÃO DO ALINHAMENTO VERTICAL À VISTA */
+        .page.avista #field-valor-parcela {
+            bottom: auto; /* Remove a âncora inferior que jogava para cima */
+            top: 55%; /* Centraliza exatamente no meio do bloco de preço */
+            transform: scaleX(0.70) translateY(-50%); /* Centralização matemática perfeita */
+            transform-origin: center center;
+            margin-bottom: 0 !important;
+            /* Permite que a barra de Eixo Y continue funcionando mesmo no modo À Vista */
+            margin-top: calc(var(--val-y) * -1cm * var(--scale)); 
+        }
 
         .page.size-A4.padrao .garantia-item { bottom: calc((var(--b) * 1cm * var(--scale)) - 0.15cm) !important; }
         .page.size-A5.promocional #field-valor-parcela { bottom: 0.4cm !important; }
@@ -855,7 +879,6 @@
         if(data.g2) { window.setInputVal('in-g2-q', data.g2.q); window.setInputVal('in-g2-v', data.g2.v); window.setInputVal('in-g2-t', data.g2.t); }
         if(data.g3) { window.setInputVal('in-g3-q', data.g3.q); window.setInputVal('in-g3-v', data.g3.v); window.setInputVal('in-g3-t', data.g3.t); }
         
-        // Se já tiver ajustes salvos antigamente, mantemos, senão usa o novo padrão 10.2 e -0.8
         if(data.ajustes) { 
             window.setInputVal('adj-size', data.ajustes.size || 10.2); 
             window.setInputVal('adj-spacing', data.ajustes.spacing || -0.55); 
@@ -911,12 +934,12 @@
         const parcelas = window.getTextVal('in-parcelas'); window.setSafeText('out-parcelas', parcelas ? parcelas + 'x' : '');
         const cartaz = document.getElementById('cartaz'); 
         
-        // --- SCRIPT DOS CENTAVOS SUPERIORES COM NOVO ESPAÇAMENTO ---
+        // --- SCRIPT DOS CENTAVOS SUPERIORES ---
         let valorParcelaTexto = cartaz.classList.contains('avista') ? window.getTextVal('in-v-vis') : window.getTextVal('in-v-parc');
         if (valorParcelaTexto && valorParcelaTexto.includes(',')) {
             let partes = valorParcelaTexto.split(',');
-            // Injeta um "thin space" (&thinsp;) para o espaço ficar pequeno e proporcional
-            document.getElementById('field-valor-parcela').innerHTML = partes[0] + '<span class="cents-superscript">,&thinsp;' + partes[1] + '</span>';
+            // Usa 2 spans para aplicar a mesma margem reduzida antes da vírgula e depois dela
+            document.getElementById('field-valor-parcela').innerHTML = partes[0] + '<span class="cents-superscript">,<span class="cents-numbers">' + partes[1] + '</span></span>';
         } else {
             window.setSafeText('field-valor-parcela', valorParcelaTexto);
         }
@@ -936,7 +959,6 @@
     };
 
     window.resetAdjustments = function() {
-        // Agora restaura para os novos padrões: Tamanho 10.2 e Eixo Y -0.8
         ['adj-size', 'adj-spacing', 'adj-x', 'adj-y'].forEach((id, i) => { let el = document.getElementById(id); if(el) el.value = [10.2, -0.55, 0, -0.8][i]; }); window.applyAdjustments();
     };
 
