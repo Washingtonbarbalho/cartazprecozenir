@@ -114,10 +114,22 @@
         /* --- TELA: EDITOR --- */
         #control-panel { width: var(--sidebar-width); background: white; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 100; overflow-y: auto; height: 100vh; position: fixed; left: 0; top: 0; }
         #control-panel::-webkit-scrollbar { width: 6px; } #control-panel::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        .editor-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #eee; }
+        
+        /* CABEÇALHO FIXADO DO EDITOR */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+            margin: -20px -20px 15px -20px;
+            padding: 20px 20px 15px 20px;
+            border-bottom: 1px solid #ccc;
+            box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1);
+        }
+        .editor-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 2px solid #eee; }
         .editor-header h2 { font-size: 1.1rem; color: var(--zenir-blue); }
+
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;}
         .section-title { background: #f8f9fa; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; margin: 15px 0 10px 0; border-left: 4px solid var(--zenir-blue); }
         details.ajustes-details { margin-top: 25px; border: 1px solid #eee; border-radius: 6px; padding: 5px 10px; background: #fff; }
         details.ajustes-details summary { font-size: 0.8rem; font-weight: bold; color: var(--zenir-red); cursor: pointer; outline: none; padding: 5px 0; user-select: none; }
@@ -133,15 +145,34 @@
 
         .field { position: absolute; left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); line-height: 1.2; word-wrap: break-word; }
         
-        #field-produto { top: calc(4.4cm * var(--scale)); font-size: calc(1.2cm * var(--scale)); font-weight: 700; line-height: 1.1; }
+        /* SISTEMA DE TEXTO FLUIDO (PRODUTO, REF, CARAC E CÓDIGO) */
+        #text-flow-container {
+            top: calc(4.4cm * var(--scale));
+            display: flex;
+            flex-direction: column;
+            gap: calc(0.15cm * var(--scale)); /* Espaçamento entre os campos que empurra tudo caso pule linha */
+            z-index: 2;
+        }
+
+        #field-produto { font-size: calc(1.2cm * var(--scale)); font-weight: 700; line-height: 1.1; }
         #field-validade { top: calc(4.4cm * var(--scale)); font-family: 'Lato', sans-serif; font-size: calc(9pt * var(--scale)); font-weight: 400; text-align: right; color: var(--zenir-red); display: none; }
-        #field-ref-marca { top: calc(5.7cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 400; line-height: 1.1; }
+        
+        #field-ref-marca { font-size: calc(0.85cm * var(--scale)); font-weight: 400; line-height: 1.1; }
         #field-ref-marca span.marca { font-weight: 700; }
-        #field-caracteristicas { top: calc(6.7cm * var(--scale)); font-size: calc(0.85cm * var(--scale)); font-weight: 700; line-height: 1.1; }
-        #field-codigo { top: calc(7.8cm * var(--scale)); font-size: calc(0.7cm * var(--scale)); font-weight: 400; }
+        #field-caracteristicas { font-size: calc(0.85cm * var(--scale)); font-weight: 700; line-height: 1.1; }
+        #field-codigo { font-size: calc(0.85cm * var(--scale)); font-weight: 400; line-height: 1.1; }
         
         #price-block { position: absolute; top: calc(8.5cm * var(--scale)); left: 0; width: 100%; height: calc(9.5cm * var(--scale)); }
-        #field-parcelas-container { position: absolute; left: calc(1cm * var(--scale)); bottom: calc(1.1cm * var(--scale)); display: flex; flex-direction: column; line-height: 0.85; font-size: calc(2.2cm * var(--scale)); font-weight: 700; transform: scaleX(0.85); transform-origin: left bottom; text-align: center; }
+        
+        #field-parcelas-container { 
+            position: absolute; 
+            left: calc(1.8cm * var(--scale)); 
+            bottom: calc(0.4cm * var(--scale)); 
+            margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); 
+            display: flex; flex-direction: column; line-height: 0.85; 
+            font-size: calc(2.2cm * var(--scale)); font-weight: 700; 
+            transform: scaleX(0.85); transform-origin: left bottom; text-align: center; z-index: 5;
+        }
         
         #field-valor-parcela { 
             position: absolute; left: 0; width: 100%; bottom: 0; text-align: center; 
@@ -177,9 +208,7 @@
         #field-prazo-label { text-transform: uppercase; font-size: calc(0.75cm * var(--scale)); font-weight: 700; line-height: 1; }
         #field-prazo-sublabel { font-family: 'Lato', sans-serif; font-size: calc(0.28cm * var(--scale)) !important; font-weight: 400 !important; text-transform: none; margin-top: calc(0.1cm * var(--scale)); white-space: nowrap; line-height: 1; }
         .separator { margin: 0 calc(0.8cm * var(--scale)); font-size: calc(0.9cm * var(--scale)) !important; font-weight: 400 !important; }
-        .garantia-item { position: absolute; font-family: 'Lato', sans-serif; font-weight: 400; transition: bottom 0.3s ease, margin-bottom 0.3s ease; font-size: calc(9pt * var(--scale)); bottom: calc(var(--b) * 1cm * var(--scale)); left: calc(var(--l) * 1cm * var(--scale)); }
 
-        .page.promocional .garantia-item { margin-bottom: calc(0.85cm * var(--scale)); }
         .page.promocional #field-validade { display: block; }
         
         .page.avista #field-parcelas-container { display: none !important; }
@@ -198,32 +227,13 @@
             margin-top: calc(var(--val-y) * -1cm * var(--scale)); 
         }
 
-        .page.size-A4.padrao .garantia-item { bottom: calc((var(--b) * 1cm * var(--scale)) - 0.15cm) !important; }
         .page.size-A5.promocional #field-valor-parcela { bottom: 0.4cm !important; }
         .page.size-A5.promocional #field-totais { margin-top: -0.4cm !important; }
-        .page.size-A5.promocional #g1-q, .page.size-A5.promocional #g2-q, .page.size-A5.promocional #g3-q, .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g3-v { bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.3cm) !important; }
-        .page.size-A5.promocional #g1-t, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g1-vis, .page.size-A5.promocional #g2-vis, .page.size-A5.promocional #g3-vis { bottom: calc((var(--b) * 1cm * var(--scale)) + (0.85cm * var(--scale)) - 0.4cm) !important; }
-        .page.size-A5.promocional #g1-q { left: calc((6cm * var(--scale)) - 2.9cm) !important; }
-        .page.size-A5.promocional #g1-v, .page.size-A5.promocional #g1-t, .page.size-A5.promocional #g1-vis { left: calc((8cm * var(--scale)) - 2.4cm) !important; }
-        .page.size-A5.promocional #g2-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 4.5cm) !important; }
-        .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g2-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 4.5cm) !important; }
-        .page.size-A5.promocional #g3-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 9.0cm) !important; }
-        .page.size-A5.promocional #g3-v, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g3-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 9.0cm) !important; }
         .page.size-A5.padrao .field { margin-top: 0.3cm !important; margin-left: 0.4cm !important; }
         .page.size-A5.padrao #field-parcelas-container { margin-left: 0.4cm !important; }
-        .page.size-A5.padrao .garantia-item { margin-bottom: 0.1cm !important; }
-        .page.size-A5.padrao #g3-q, .page.size-A5.padrao #g3-v, .page.size-A5.padrao #g3-t, .page.size-A5.padrao #g3-vis { margin-left: -0.4cm !important; }
         .page.size-A6.padrao #field-parcelas-container { margin-left: 0.25cm !important; } 
         .page.size-A6.padrao #field-totais { margin-top: -0.2cm !important; } 
         .page.size-A6.padrao .field { margin-left: 0.4cm !important; } 
-        .page.size-A6.padrao #g1-q, .page.size-A6.padrao #g3-q, .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g2-v, .page.size-A6.padrao #g3-v { bottom: calc((var(--b) * 1cm * var(--scale)) + 0.5cm) !important; }
-        .page.size-A6.padrao #g1-t, .page.size-A6.padrao #g2-t, .page.size-A6.padrao #g3-t, .page.size-A6.padrao #g1-vis, .page.size-A6.padrao #g2-vis, .page.size-A6.padrao #g3-vis { bottom: calc((var(--b) * 1cm * var(--scale)) + 0.35cm) !important; }
-        .page.size-A6.padrao #g1-q { left: calc((6cm * var(--scale)) - 1.6cm) !important; }
-        .page.size-A6.padrao #g1-v, .page.size-A6.padrao #g1-t, .page.size-A6.padrao #g1-vis { left: calc((8cm * var(--scale)) - 1.7cm) !important; }
-        .page.size-A6.padrao #g2-q { left: calc(((6cm * var(--scale)) - 1.6cm) + 3cm) !important; }
-        .page.size-A6.padrao #g2-v, .page.size-A6.padrao #g2-t, .page.size-A6.padrao #g2-vis { left: calc(((8cm * var(--scale)) - 1.7cm) + 3cm) !important; }
-        .page.size-A6.padrao #g3-q { left: calc(((6cm * var(--scale)) - 1.6cm) + 6cm) !important; }
-        .page.size-A6.padrao #g3-v, .page.size-A6.padrao #g3-t, .page.size-A6.padrao #g3-vis { left: calc(((8cm * var(--scale)) - 1.7cm) + 6cm) !important; }
 
         /* --- RESPONSIVIDADE PWA MOBILE --- */
         @media (max-width: 768px) {
@@ -317,8 +327,8 @@
 <div id="auth-screen" class="screen">
     <div class="auth-card" id="login-box">
         <h2>Entrar no Sistema</h2>
-        <input type="email" id="login-email" placeholder="E-mail">
-        <input type="password" id="login-pass" placeholder="Senha">
+        <input type="email" id="login-email" placeholder="E-mail" onkeypress="if(event.key === 'Enter') window.doLogin()">
+        <input type="password" id="login-pass" placeholder="Senha" onkeypress="if(event.key === 'Enter') window.doLogin()">
         <button class="btn-zenir" style="width: 100%; margin-top: 10px;" onclick="window.doLogin()">Entrar</button>
         <span class="toggle-link" onclick="window.toggleAuthMode('register')">Não tem conta? Cadastre-se</span>
     </div>
@@ -330,7 +340,7 @@
         <input type="email" id="reg-email" placeholder="E-mail">
         <input type="text" id="reg-filial" placeholder="Filial Zenir">
         <input type="password" id="reg-pass" placeholder="Senha">
-        <input type="password" id="reg-pass-conf" placeholder="Confirmar Senha">
+        <input type="password" id="reg-pass-conf" placeholder="Confirmar Senha" onkeypress="if(event.key === 'Enter') window.doRegister()">
         <button class="btn-zenir" style="width: 100%; margin-top: 10px;" onclick="window.doRegister()">Cadastrar</button>
         <span class="toggle-link" onclick="window.toggleAuthMode('login')">Já tem conta? Faça login</span>
     </div>
@@ -355,7 +365,7 @@
         <!-- ABA 1: PRODUTOS -->
         <div id="tab-produtos" class="tab-content active">
             <div class="dash-actions">
-                <input type="text" id="search-input" class="search-bar" placeholder="🔍 Buscar por código, produto ou marca..." oninput="window.filterTable()">
+                <input type="text" id="search-input" class="search-bar" placeholder="🔍 Buscar por código, produto, marca ou referência..." oninput="window.filterTable()">
                 <button class="btn-zenir" onclick="window.openEditor(null)">+ Novo Cartaz</button>
             </div>
             <div class="table-responsive">
@@ -420,26 +430,28 @@
 <!-- TELA: EDITOR -->
 <div id="editor-screen" class="screen">
     <div id="control-panel" class="print-hide">
-        <div class="editor-header">
-            <h2>Editor de Cartaz</h2>
-            <button class="btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" onclick="window.closeEditor()">Voltar</button>
-        </div>
+        <!-- HEADER FIXADO NO TOPO -->
+        <div class="sticky-header">
+            <div class="editor-header">
+                <h2>Editor de Cartaz</h2>
+                <button class="btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" onclick="window.closeEditor()">Voltar</button>
+            </div>
 
-        <div class="form-group" id="editor-print-controls">
-            <label>Tamanho da Folha</label>
-            <select id="in-tamanho-cartaz" onchange="window.toggleCartazTipo()" style="border-color: var(--zenir-red); border-width: 2px;">
-                <option value="A4">Tamanho A4 (Grande)</option>
-                <option value="A5">Tamanho A5 (Médio)</option>
-                <option value="A6">Tamanho A6 (Pequeno)</option>
-            </select>
-            <label>Tipo de Cartaz</label>
-            <select id="in-tipo-cartaz" onchange="window.toggleCartazTipo()">
-                <option value="padrao">Padrão (Parcelado)</option>
-                <option value="promocional">Promocional (Parcelado)</option>
-                <option value="avista_padrao">Padrão (À Vista)</option>
-                <option value="avista_promocional">Promocional (À Vista)</option>
-            </select>
-            <hr style="margin: 15px 0;">
+            <div class="form-group" id="editor-print-controls" style="margin-bottom: 0;">
+                <label>Tamanho da Folha</label>
+                <select id="in-tamanho-cartaz" onchange="window.toggleCartazTipo()" style="border-color: var(--zenir-red); border-width: 2px;">
+                    <option value="A4">Tamanho A4 (Grande)</option>
+                    <option value="A5">Tamanho A5 (Médio)</option>
+                    <option value="A6">Tamanho A6 (Pequeno)</option>
+                </select>
+                <label>Tipo de Cartaz</label>
+                <select id="in-tipo-cartaz" onchange="window.toggleCartazTipo()" style="margin-bottom: 0;">
+                    <option value="padrao">Padrão (Parcelado)</option>
+                    <option value="promocional">Promocional (Parcelado)</option>
+                    <option value="avista_padrao">Padrão (À Vista)</option>
+                    <option value="avista_promocional">Promocional (À Vista)</option>
+                </select>
+            </div>
         </div>
 
         <div class="form-group"><label style="color: var(--zenir-red);">Validade da Promoção</label><input type="text" id="in-validade" placeholder="Válido de 10/10 até 20/10" oninput="window.update()"></div>
@@ -467,14 +479,6 @@
         </div>
         <div class="form-group"><label>Total a Prazo (R$)</label><input type="text" id="in-tot-praz" oninput="window.update()"></div>
 
-        <div class="section-title">Garantias Estendidas</div>
-        <label>+ 1 ANO</label>
-        <div class="grid-3"><input type="text" id="in-g1-q" placeholder="Qtd" oninput="window.update()"><input type="text" id="in-g1-v" placeholder="Parcela" oninput="window.update()"><input type="text" id="in-g1-t" placeholder="Total" oninput="window.update()"></div>
-        <label>+ 2 ANOS</label>
-        <div class="grid-3"><input type="text" id="in-g2-q" placeholder="Qtd" oninput="window.update()"><input type="text" id="in-g2-v" placeholder="Parcela" oninput="window.update()"><input type="text" id="in-g2-t" placeholder="Total" oninput="window.update()"></div>
-        <label>+ 3 ANOS</label>
-        <div class="grid-3"><input type="text" id="in-g3-q" placeholder="Qtd" oninput="window.update()"><input type="text" id="in-g3-v" placeholder="Parcela" oninput="window.update()"><input type="text" id="in-g3-t" placeholder="Total" oninput="window.update()"></div>
-
         <hr style="margin: 25px 0 15px 0;">
         <button class="btn-zenir" style="width: 100%; margin-bottom: 10px; background-color: #28a745;" onclick="window.saveProduct()">💾 SALVAR PRODUTO</button>
         <button class="btn-zenir" style="width: 100%; background: #666;" onclick="window.testPrint()">🖨️ IMPRIMIR</button>
@@ -494,11 +498,16 @@
     <!-- PREVIEW AREA -->
     <div id="preview-area">
         <div id="cartaz" class="page size-A4 padrao">
-            <div id="field-produto" class="field"></div>
             <div id="field-validade" class="field"></div> 
-            <div id="field-ref-marca" class="field"><span id="out-ref"></span> <span id="out-marca" class="marca"></span></div>
-            <div id="field-caracteristicas" class="field"></div>
-            <div id="field-codigo" class="field"></div>
+            
+            <!-- CONTÊINER FLEXÍVEL PARA DESCIDAS PROPORCIONAIS -->
+            <div id="text-flow-container" class="field">
+                <div id="field-produto"></div>
+                <div id="field-ref-marca"><span id="out-ref"></span> <span id="out-marca" class="marca"></span></div>
+                <div id="field-caracteristicas"></div>
+                <div id="field-codigo"></div>
+            </div>
+
             <div id="price-block">
                 <div id="field-parcelas-container"><span id="out-parcelas"></span><span>R$</span></div>
                 <div id="field-valor-parcela"></div>
@@ -513,18 +522,6 @@
                 <span id="out-v-vis"></span>
                 <span id="field-vista-label">À VISTA</span>
             </div>
-            <div class="garantia-item" style="--b: 3.5; --l: 6;" id="g1-q"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 8;" id="g1-v"></div>
-            <div class="garantia-item" style="--b: 3.0; --l: 8;" id="g1-t"></div>
-            <div class="garantia-item" style="--b: 2.5; --l: 8;" id="g1-vis"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 11;" id="g2-q"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 13;" id="g2-v"></div>
-            <div class="garantia-item" style="--b: 3.0; --l: 13;" id="g2-t"></div>
-            <div class="garantia-item" style="--b: 2.5; --l: 13;" id="g2-vis"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 16;" id="g3-q"></div>
-            <div class="garantia-item" style="--b: 3.5; --l: 18;" id="g3-v"></div>
-            <div class="garantia-item" style="--b: 3.0; --l: 18;" id="g3-t"></div>
-            <div class="garantia-item" style="--b: 2.5; --l: 18;" id="g3-vis"></div>
         </div>
     </div>
 </div>
@@ -584,7 +581,7 @@
     };
 
     // ==========================================
-    // DECLARAÇÃO GLOBAL DE FUNÇÕES (MÁXIMA SEGURANÇA NO ESCOPO)
+    // DECLARAÇÃO GLOBAL DE FUNÇÕES
     // ==========================================
     window.parseMoney = function(str) {
         if (!str) return 0;
@@ -776,7 +773,12 @@
 
     window.filterTable = function() {
         const term = window.getTextVal('search-input').toLowerCase();
-        currentFilteredProducts = allProducts.filter(p => (p.codigo || "").toLowerCase().includes(term) || (p.produto || "").toLowerCase().includes(term) || (p.marca || "").toLowerCase().includes(term));
+        currentFilteredProducts = allProducts.filter(p => 
+            (p.codigo || "").toLowerCase().includes(term) || 
+            (p.produto || "").toLowerCase().includes(term) || 
+            (p.marca || "").toLowerCase().includes(term) ||
+            (p.ref || "").toLowerCase().includes(term) // <--- Busca também por Referência
+        );
         currentPage = 1; window.renderTable();
     };
 
@@ -864,7 +866,6 @@
             produto: window.getTextVal('in-produto'), ref: window.getTextVal('in-ref'), marca: window.getTextVal('in-marca'), carac: window.getTextVal('in-carac'),
             codigo: window.getTextVal('in-codigo'), condicao: window.getTextVal('in-condicao'), v_vis: window.getTextVal('in-v-vis'),
             parcelas: window.getTextVal('in-parcelas'), v_parc: window.getTextVal('in-v-parc'), tot_praz: window.getTextVal('in-tot-praz'),
-            g1: { q: window.getTextVal('in-g1-q'), v: window.getTextVal('in-g1-v'), t: window.getTextVal('in-g1-t') }, g2: { q: window.getTextVal('in-g2-q'), v: window.getTextVal('in-g2-v'), t: window.getTextVal('in-g2-t') }, g3: { q: window.getTextVal('in-g3-q'), v: window.getTextVal('in-g3-v'), t: window.getTextVal('in-g3-t') },
             ajustes: { size: window.getTextVal('adj-size'), spacing: window.getTextVal('adj-spacing'), x: window.getTextVal('adj-x'), y: window.getTextVal('adj-y') }, atualizadoEm: new Date().toISOString()
         };
     };
@@ -875,9 +876,6 @@
         window.setInputVal('in-marca', data.marca); window.setInputVal('in-carac', data.carac); window.setInputVal('in-codigo', data.codigo);
         window.setInputVal('in-condicao', data.condicao || 'carne'); window.setInputVal('in-v-vis', data.v_vis);
         window.setInputVal('in-parcelas', data.parcelas); window.setInputVal('in-v-parc', data.v_parc); window.setInputVal('in-tot-praz', data.tot_praz);
-        if(data.g1) { window.setInputVal('in-g1-q', data.g1.q); window.setInputVal('in-g1-v', data.g1.v); window.setInputVal('in-g1-t', data.g1.t); }
-        if(data.g2) { window.setInputVal('in-g2-q', data.g2.q); window.setInputVal('in-g2-v', data.g2.v); window.setInputVal('in-g2-t', data.g2.t); }
-        if(data.g3) { window.setInputVal('in-g3-q', data.g3.q); window.setInputVal('in-g3-v', data.g3.v); window.setInputVal('in-g3-t', data.g3.t); }
         
         if(data.ajustes) { 
             window.setInputVal('adj-size', data.ajustes.size || 10.2); 
@@ -890,7 +888,7 @@
     };
 
     window.clearForm = function() {
-        const ids = ['in-validade','in-produto','in-ref','in-marca','in-carac','in-codigo','in-v-vis','in-parcelas','in-v-parc','in-tot-praz','in-g1-q','in-g1-v','in-g1-t','in-g2-q','in-g2-v','in-g2-t','in-g3-q','in-g3-v','in-g3-t'];
+        const ids = ['in-validade','in-produto','in-ref','in-marca','in-carac','in-codigo','in-v-vis','in-parcelas','in-v-parc','in-tot-praz'];
         ids.forEach(id => window.setInputVal(id, '')); window.setInputVal('in-tamanho-cartaz', 'A4'); window.setInputVal('in-tipo-cartaz', 'padrao'); window.setInputVal('in-condicao', 'carne'); window.resetAdjustments();
     };
 
@@ -948,7 +946,6 @@
         const totalP = window.getTextVal('in-tot-praz'); window.setSafeText('out-tot-praz', totalP ? '= R$ ' + totalP : ''); const totalV = window.getTextVal('in-v-vis'); window.setSafeText('out-v-vis', totalV ? 'R$ ' + totalV : '');
         const condicao = window.getTextVal('in-condicao'); const pLabel = document.getElementById('field-prazo-label'); const pSub = document.getElementById('field-prazo-sublabel');
         if (pLabel && pSub) { if (condicao === 'carne') { pLabel.innerText = 'À PRAZO'; pSub.innerText = '6,9% a.m. e 122,71% a.a.'; pSub.style.display = 'block'; } else if (condicao === 'cartao_fator') { pLabel.innerText = 'NO CARTÃO'; pSub.innerText = '2,92% a.m. e 41,25% a.a.'; pSub.style.display = 'block'; } else if (condicao === 'cartao_sem_juros') { pLabel.innerText = 'NO CARTÃO'; pSub.innerText = 'sem juros'; pSub.style.display = 'block'; } }
-        for (let i = 1; i <= 3; i++) { window.setSafeText(`g${i}-q`, window.getTextVal(`in-g${i}-q`)); window.setSafeText(`g${i}-v`, window.getTextVal(`in-g${i}-v`)); window.setSafeText(`g${i}-t`, window.getTextVal(`in-g${i}-t`)); window.setSafeText(`g${i}-vis`, window.getTextVal(`in-g${i}-t`)); }
     };
 
     window.applyAdjustments = function() {
@@ -971,5 +968,3 @@
 </script>
 </body>
 </html>
-
-
