@@ -240,8 +240,8 @@
 
         /* --- RESPONSIVIDADE PWA MOBILE TOTALMENTE REFEITA --- */
         @media (max-width: 768px) {
-            /* Altera o layout para empilhar: os painéis não rolam separados, a página rola como um todo */
-            #editor-screen { flex-direction: column; display: block; }
+            /* AJUSTE: Só empilha e muda o display SE a tela de editor estiver ATIVA (.active) */
+            #editor-screen.active { flex-direction: column; }
             #control-panel { width: 100%; height: auto; position: relative; overflow: visible; border-right: none; border-bottom: 4px solid var(--zenir-blue); padding: 15px; }
             #preview-area { margin-left: 0; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; min-height: auto; }
             
