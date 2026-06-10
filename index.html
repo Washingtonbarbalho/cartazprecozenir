@@ -112,10 +112,15 @@
         .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(40px, 1fr)); gap: 8px; max-height: 300px; overflow-y: auto; padding: 10px 5px; }
 
         /* --- TELA: EDITOR --- */
-        #control-panel { width: var(--sidebar-width); background: white; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 100; overflow-y: auto; height: 100vh; position: fixed; left: 0; top: 0; }
+        #control-panel { width: var(--sidebar-width); background: white; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.1); z-index: 100; overflow-y: auto; height: 100vh; position: fixed; left: 0; top: 0; scroll-behavior: smooth; }
         #control-panel::-webkit-scrollbar { width: 6px; } #control-panel::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
-        .editor-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #eee; }
+        
+        /* CABEÇALHO FIXO DO EDITOR */
+        .sticky-controls { position: sticky; top: -20px; background: white; z-index: 100; padding: 20px 0 10px 0; margin: -20px 0 15px 0; border-bottom: 2px solid #eee; }
+        
+        .editor-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .editor-header h2 { font-size: 1.1rem; color: var(--zenir-blue); }
+        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;}
         .section-title { background: #f8f9fa; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; margin: 15px 0 10px 0; border-left: 4px solid var(--zenir-blue); }
@@ -198,6 +203,11 @@
             margin-top: calc(var(--val-y) * -1cm * var(--scale)); 
         }
 
+        /* CORREÇÃO DO PREÇO A VISTA PROMOCIONAL PARA NÃO COBRIR "A VISTA" */
+        .page.size-A5.promocional.avista #field-valor-parcela {
+            top: calc(55% - 1.5cm) !important;
+        }
+
         .page.size-A4.padrao .garantia-item { bottom: calc((var(--b) * 1cm * var(--scale)) - 0.15cm) !important; }
         .page.size-A5.promocional #field-valor-parcela { bottom: 0.4cm !important; }
         .page.size-A5.promocional #field-totais { margin-top: -0.4cm !important; }
@@ -209,7 +219,10 @@
         .page.size-A5.promocional #g2-v, .page.size-A5.promocional #g2-t, .page.size-A5.promocional #g2-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 4.5cm) !important; }
         .page.size-A5.promocional #g3-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 9.0cm) !important; }
         .page.size-A5.promocional #g3-v, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g3-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 9.0cm) !important; }
-        .page.size-A5.padrao .field { margin-top: 0.3cm !important; margin-left: 0.4cm !important; }
+        
+        /* AJUSTE A5 PADRÃO - 0.1cm para baixo e 0.15cm para esquerda */
+        .page.size-A5.padrao .field { margin-top: 0.4cm !important; margin-left: 0.25cm !important; }
+        
         .page.size-A5.padrao #field-parcelas-container { margin-left: 0.4cm !important; }
         .page.size-A5.padrao .garantia-item { margin-bottom: 0.1cm !important; }
         .page.size-A5.padrao #g3-q, .page.size-A5.padrao #g3-v, .page.size-A5.padrao #g3-t, .page.size-A5.padrao #g3-vis { margin-left: -0.4cm !important; }
@@ -233,6 +246,7 @@
             .dash-actions { flex-direction: column; }
             .nav-tabs { flex-wrap: wrap; }
             .tab-btn { flex: 1; text-align: center; }
+            .sticky-controls { position: relative; top: 0; margin-top: 0; }
         }
 
         /* 🔴 MOTOR DE IMPRESSÃO BLINDADO 🔴 */
@@ -355,7 +369,7 @@
         <!-- ABA 1: PRODUTOS -->
         <div id="tab-produtos" class="tab-content active">
             <div class="dash-actions">
-                <input type="text" id="search-input" class="search-bar" placeholder="🔍 Buscar por código, produto ou marca..." oninput="window.filterTable()">
+                <input type="text" id="search-input" class="search-bar" placeholder="🔍 Buscar por código, produto, ref ou marca..." oninput="window.filterTable()">
                 <button class="btn-zenir" onclick="window.openEditor(null)">+ Novo Cartaz</button>
             </div>
             <div class="table-responsive">
@@ -420,26 +434,29 @@
 <!-- TELA: EDITOR -->
 <div id="editor-screen" class="screen">
     <div id="control-panel" class="print-hide">
-        <div class="editor-header">
-            <h2>Editor de Cartaz</h2>
-            <button class="btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" onclick="window.closeEditor()">Voltar</button>
-        </div>
+        
+        <!-- CABEÇALHO E CONTROLES FIXADOS -->
+        <div class="sticky-controls">
+            <div class="editor-header">
+                <h2>Editor de Cartaz</h2>
+                <button class="btn-outline" style="padding: 5px 10px; font-size: 0.8rem;" onclick="window.closeEditor()">Voltar</button>
+            </div>
 
-        <div class="form-group" id="editor-print-controls">
-            <label>Tamanho da Folha</label>
-            <select id="in-tamanho-cartaz" onchange="window.toggleCartazTipo()" style="border-color: var(--zenir-red); border-width: 2px;">
-                <option value="A4">Tamanho A4 (Grande)</option>
-                <option value="A5">Tamanho A5 (Médio)</option>
-                <option value="A6">Tamanho A6 (Pequeno)</option>
-            </select>
-            <label>Tipo de Cartaz</label>
-            <select id="in-tipo-cartaz" onchange="window.toggleCartazTipo()">
-                <option value="padrao">Padrão (Parcelado)</option>
-                <option value="promocional">Promocional (Parcelado)</option>
-                <option value="avista_padrao">Padrão (À Vista)</option>
-                <option value="avista_promocional">Promocional (À Vista)</option>
-            </select>
-            <hr style="margin: 15px 0;">
+            <div class="form-group" id="editor-print-controls">
+                <label>Tamanho da Folha</label>
+                <select id="in-tamanho-cartaz" onchange="window.toggleCartazTipo()" style="border-color: var(--zenir-red); border-width: 2px;">
+                    <option value="A4">Tamanho A4 (Grande)</option>
+                    <option value="A5">Tamanho A5 (Médio)</option>
+                    <option value="A6">Tamanho A6 (Pequeno)</option>
+                </select>
+                <label>Tipo de Cartaz</label>
+                <select id="in-tipo-cartaz" onchange="window.toggleCartazTipo()">
+                    <option value="padrao">Padrão (Parcelado)</option>
+                    <option value="promocional">Promocional (Parcelado)</option>
+                    <option value="avista_padrao">Padrão (À Vista)</option>
+                    <option value="avista_promocional">Promocional (À Vista)</option>
+                </select>
+            </div>
         </div>
 
         <div class="form-group"><label style="color: var(--zenir-red);">Validade da Promoção</label><input type="text" id="in-validade" placeholder="Válido de 10/10 até 20/10" oninput="window.update()"></div>
@@ -469,11 +486,23 @@
 
         <div class="section-title">Garantias Estendidas</div>
         <label>+ 1 ANO</label>
-        <div class="grid-3"><input type="text" id="in-g1-q" placeholder="Qtd" oninput="window.update()"><input type="text" id="in-g1-v" placeholder="Parcela" oninput="window.update()"><input type="text" id="in-g1-t" placeholder="Total" oninput="window.update()"></div>
+        <div class="grid-3">
+            <input type="text" id="in-g1-q" placeholder="Qtd" oninput="window.calcGarantia(1, 'q')">
+            <input type="text" id="in-g1-v" placeholder="Parcela" oninput="window.calcGarantia(1, 'v')">
+            <input type="text" id="in-g1-t" placeholder="Total" oninput="window.calcGarantia(1, 't')">
+        </div>
         <label>+ 2 ANOS</label>
-        <div class="grid-3"><input type="text" id="in-g2-q" placeholder="Qtd" oninput="window.update()"><input type="text" id="in-g2-v" placeholder="Parcela" oninput="window.update()"><input type="text" id="in-g2-t" placeholder="Total" oninput="window.update()"></div>
+        <div class="grid-3">
+            <input type="text" id="in-g2-q" placeholder="Qtd" oninput="window.calcGarantia(2, 'q')">
+            <input type="text" id="in-g2-v" placeholder="Parcela" oninput="window.calcGarantia(2, 'v')">
+            <input type="text" id="in-g2-t" placeholder="Total" oninput="window.calcGarantia(2, 't')">
+        </div>
         <label>+ 3 ANOS</label>
-        <div class="grid-3"><input type="text" id="in-g3-q" placeholder="Qtd" oninput="window.update()"><input type="text" id="in-g3-v" placeholder="Parcela" oninput="window.update()"><input type="text" id="in-g3-t" placeholder="Total" oninput="window.update()"></div>
+        <div class="grid-3">
+            <input type="text" id="in-g3-q" placeholder="Qtd" oninput="window.calcGarantia(3, 'q')">
+            <input type="text" id="in-g3-v" placeholder="Parcela" oninput="window.calcGarantia(3, 'v')">
+            <input type="text" id="in-g3-t" placeholder="Total" oninput="window.calcGarantia(3, 't')">
+        </div>
 
         <hr style="margin: 25px 0 15px 0;">
         <button class="btn-zenir" style="width: 100%; margin-bottom: 10px; background-color: #28a745;" onclick="window.saveProduct()">💾 SALVAR PRODUTO</button>
@@ -774,9 +803,15 @@
         } catch(e) { window.showToast('Erro ao carregar produtos.', 'error'); }
     };
 
+    // AJUSTADO: INCLUSÃO DA PESQUISA PELA REFERÊNCIA
     window.filterTable = function() {
         const term = window.getTextVal('search-input').toLowerCase();
-        currentFilteredProducts = allProducts.filter(p => (p.codigo || "").toLowerCase().includes(term) || (p.produto || "").toLowerCase().includes(term) || (p.marca || "").toLowerCase().includes(term));
+        currentFilteredProducts = allProducts.filter(p => 
+            (p.codigo || "").toLowerCase().includes(term) || 
+            (p.produto || "").toLowerCase().includes(term) || 
+            (p.ref || "").toLowerCase().includes(term) || 
+            (p.marca || "").toLowerCase().includes(term)
+        );
         currentPage = 1; window.renderTable();
     };
 
@@ -853,7 +888,12 @@
     window.openEditor = function(id) {
         currentEditingId = id;
         if (id) { const prod = allProducts.find(p => p.id === id); if(prod) window.populateForm(prod); } else { window.clearForm(); }
-        window.showScreen('editor-screen'); setTimeout(() => { window.autoCalcular(); window.toggleCartazTipo(); window.applyAdjustments(); }, 100);
+        window.showScreen('editor-screen'); 
+        
+        // AJUSTE: Rolar painel esquerdo para o topo
+        document.getElementById('control-panel').scrollTop = 0;
+        
+        setTimeout(() => { window.autoCalcular(); window.toggleCartazTipo(); window.applyAdjustments(); }, 100);
     };
 
     window.closeEditor = function() { currentEditingId = null; window.showScreen('dashboard-screen'); };
@@ -928,6 +968,34 @@
         document.getElementById('in-v-parc').value = window.formatMoney(valorParcela); document.getElementById('in-tot-praz').value = window.formatMoney(valorParcela * parcelas); window.update();
     };
 
+    // AJUSTE: CÁLCULO AUTOMÁTICO DAS GARANTIAS (PARCELAS E TOTAL)
+    window.calcGarantia = function(num, origin) {
+        const qStr = window.getTextVal(`in-g${num}-q`);
+        const vStr = window.getTextVal(`in-g${num}-v`);
+        const tStr = window.getTextVal(`in-g${num}-t`);
+
+        const q = parseInt(qStr, 10);
+
+        if (q > 0) {
+            if (origin === 't' && tStr) {
+                const t = window.parseMoney(tStr);
+                window.setInputVal(`in-g${num}-v`, window.formatMoney(t / q));
+            } else if (origin === 'v' && vStr) {
+                const v = window.parseMoney(vStr);
+                window.setInputVal(`in-g${num}-t`, window.formatMoney(v * q));
+            } else if (origin === 'q') {
+                if (tStr) {
+                    const t = window.parseMoney(tStr);
+                    window.setInputVal(`in-g${num}-v`, window.formatMoney(t / q));
+                } else if (vStr) {
+                    const v = window.parseMoney(vStr);
+                    window.setInputVal(`in-g${num}-t`, window.formatMoney(v * q));
+                }
+            }
+        }
+        window.update();
+    };
+
     window.update = function() {
         if (!document.getElementById('field-produto')) return; 
         window.setSafeText('field-produto', window.getTextVal('in-produto')); window.setSafeText('field-validade', window.getTextVal('in-validade')); window.setSafeText('out-ref', window.getTextVal('in-ref')); window.setSafeText('out-marca', window.getTextVal('in-marca')); window.setSafeText('field-caracteristicas', window.getTextVal('in-carac')); window.setSafeText('field-codigo', window.getTextVal('in-codigo'));
@@ -971,5 +1039,3 @@
 </script>
 </body>
 </html>
-
-
