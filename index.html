@@ -220,8 +220,8 @@
         .page.size-A5.promocional #g3-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 9.0cm) !important; }
         .page.size-A5.promocional #g3-v, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g3-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 9.0cm) !important; }
         
-        /* AJUSTE A5 PADRÃO - 0.1cm para baixo e 0.15cm para esquerda */
-        .page.size-A5.padrao .field { margin-top: 0.4cm !important; margin-left: 0.25cm !important; }
+        /* AJUSTE A5 PADRÃO - 0.1cm para baixo e 0.25cm TOTAL para a esquerda (-0.15 original + -0.1 extra) */
+        .page.size-A5.padrao .field { margin-top: 0.1cm !important; margin-left: -0.25cm !important; }
         
         .page.size-A5.padrao #field-parcelas-container { margin-left: 0.4cm !important; }
         .page.size-A5.padrao .garantia-item { margin-bottom: 0.1cm !important; }
@@ -238,15 +238,24 @@
         .page.size-A6.padrao #g3-q { left: calc(((6cm * var(--scale)) - 1.6cm) + 6cm) !important; }
         .page.size-A6.padrao #g3-v, .page.size-A6.padrao #g3-t, .page.size-A6.padrao #g3-vis { left: calc(((8cm * var(--scale)) - 1.7cm) + 6cm) !important; }
 
-        /* --- RESPONSIVIDADE PWA MOBILE --- */
+        /* --- RESPONSIVIDADE PWA MOBILE TOTALMENTE REFEITA --- */
         @media (max-width: 768px) {
-            #control-panel { width: 100%; height: 50vh; position: relative; z-index: 100; border-bottom: 2px solid #ccc; }
-            #preview-area { margin-left: 0; padding: 20px; align-items: flex-start; min-height: 50vh; }
+            /* Altera o layout para empilhar: os painéis não rolam separados, a página rola como um todo */
+            #editor-screen { flex-direction: column; display: block; }
+            #control-panel { width: 100%; height: auto; position: relative; overflow: visible; border-right: none; border-bottom: 4px solid var(--zenir-blue); padding: 15px; }
+            #preview-area { margin-left: 0; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; min-height: auto; }
+            
+            /* Ajusta cabeçalho principal do dashboard */
             .dash-header { flex-direction: column; gap: 10px; text-align: center; }
             .dash-actions { flex-direction: column; }
             .nav-tabs { flex-wrap: wrap; }
-            .tab-btn { flex: 1; text-align: center; }
-            .sticky-controls { position: relative; top: 0; margin-top: 0; }
+            .tab-btn { flex: 1; text-align: center; font-size: 0.85rem; padding: 10px; }
+            
+            /* O cabeçalho do Editor (controles) vai ficar grudadinho no topo de forma limpa */
+            .sticky-controls { position: sticky; top: 0; z-index: 1000; background: white; margin: -15px -15px 15px -15px; padding: 15px 15px 5px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid #ddd; }
+            
+            /* Melhoria de Grids para não esmagar no celular */
+            .grid-2 { grid-template-columns: 1fr; gap: 10px; }
         }
 
         /* 🔴 MOTOR DE IMPRESSÃO BLINDADO 🔴 */
@@ -803,7 +812,6 @@
         } catch(e) { window.showToast('Erro ao carregar produtos.', 'error'); }
     };
 
-    // AJUSTADO: INCLUSÃO DA PESQUISA PELA REFERÊNCIA
     window.filterTable = function() {
         const term = window.getTextVal('search-input').toLowerCase();
         currentFilteredProducts = allProducts.filter(p => 
@@ -853,7 +861,14 @@
             if (p - lastAdded > 1) {
                 const dots = document.createElement('button'); dots.className = 'page-btn dots'; dots.innerText = '...'; dots.onclick = () => window.openPagesModal(totalPages); container.appendChild(dots);
             }
-            const btn = document.createElement('button'); btn.className = `page-btn ${p === currentPage ? 'active' : ''}`; btn.innerText = p; btn.onclick = () => { currentPage = p; window.renderTable(); }; container.appendChild(btn);
+            const btn = document.createElement('button'); btn.className = `page-btn ${p === currentPage ? 'active' : ''}`; btn.innerText = p; 
+            btn.onclick = () => { 
+                currentPage = p; 
+                window.renderTable(); 
+                // Faz a tela rolar pra cima suavemente
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            }; 
+            container.appendChild(btn);
             lastAdded = p;
         });
     };
@@ -861,7 +876,15 @@
     window.openPagesModal = function(totalPages) {
         const grid = document.getElementById('pages-grid-container'); grid.innerHTML = '';
         for(let i = 1; i <= totalPages; i++) {
-            const btn = document.createElement('button'); btn.className = `page-btn ${i === currentPage ? 'active' : ''}`; btn.innerText = i; btn.onclick = () => { currentPage = i; window.renderTable(); window.closePagesModal(); }; grid.appendChild(btn);
+            const btn = document.createElement('button'); btn.className = `page-btn ${i === currentPage ? 'active' : ''}`; btn.innerText = i; 
+            btn.onclick = () => { 
+                currentPage = i; 
+                window.renderTable(); 
+                window.closePagesModal(); 
+                // Faz a tela rolar pra cima suavemente
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }; 
+            grid.appendChild(btn);
         }
         document.getElementById('pagesModal').classList.add('active');
     };
@@ -890,13 +913,18 @@
         if (id) { const prod = allProducts.find(p => p.id === id); if(prod) window.populateForm(prod); } else { window.clearForm(); }
         window.showScreen('editor-screen'); 
         
-        // AJUSTE: Rolar painel esquerdo para o topo
+        // Rolar página para o topo no Mobile e Desktop
+        window.scrollTo({ top: 0, behavior: 'auto' });
         document.getElementById('control-panel').scrollTop = 0;
         
         setTimeout(() => { window.autoCalcular(); window.toggleCartazTipo(); window.applyAdjustments(); }, 100);
     };
 
-    window.closeEditor = function() { currentEditingId = null; window.showScreen('dashboard-screen'); };
+    window.closeEditor = function() { 
+        currentEditingId = null; 
+        window.showScreen('dashboard-screen'); 
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     window.getFormData = function() {
         return {
@@ -968,7 +996,6 @@
         document.getElementById('in-v-parc').value = window.formatMoney(valorParcela); document.getElementById('in-tot-praz').value = window.formatMoney(valorParcela * parcelas); window.update();
     };
 
-    // AJUSTE: CÁLCULO AUTOMÁTICO DAS GARANTIAS (PARCELAS E TOTAL)
     window.calcGarantia = function(num, origin) {
         const qStr = window.getTextVal(`in-g${num}-q`);
         const vStr = window.getTextVal(`in-g${num}-v`);
@@ -1006,7 +1033,6 @@
         let valorParcelaTexto = cartaz.classList.contains('avista') ? window.getTextVal('in-v-vis') : window.getTextVal('in-v-parc');
         if (valorParcelaTexto && valorParcelaTexto.includes(',')) {
             let partes = valorParcelaTexto.split(',');
-            // Usa 2 spans para aplicar a mesma margem reduzida antes da vírgula e depois dela
             document.getElementById('field-valor-parcela').innerHTML = partes[0] + '<span class="cents-superscript">,<span class="cents-numbers">' + partes[1] + '</span></span>';
         } else {
             window.setSafeText('field-valor-parcela', valorParcelaTexto);
