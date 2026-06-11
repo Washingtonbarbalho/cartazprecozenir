@@ -223,6 +223,15 @@
         .page.size-A6.padrao #g3-q { left: calc(((6cm * var(--scale)) - 1.6cm) + 6cm) !important; }
         .page.size-A6.padrao #g3-v, .page.size-A6.padrao #g3-t, .page.size-A6.padrao #g3-vis { left: calc(((8cm * var(--scale)) - 1.7cm) + 6cm) !important; }
 
+        /* AJUSTES A6 PROMOCIONAL */
+        .page.size-A6.promocional .field { 
+            margin-top: 0.2cm !important; 
+            margin-left: 0.2cm !important; 
+        }
+        .page.size-A6.promocional #field-parcelas-container { 
+            margin-left: 0.3cm !important; 
+        }
+
         /* --- RESPONSIVIDADE PWA MOBILE --- */
         @media (max-width: 768px) {
             #editor-screen.active { flex-direction: column; }
