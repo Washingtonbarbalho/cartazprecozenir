@@ -46,6 +46,9 @@
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; margin-bottom: 12px; }
         label { display: block; font-size: 0.75rem; font-weight: bold; color: #555; margin-bottom: 4px; text-transform: uppercase; }
 
+        /* Checkbox Customizado */
+        .custom-checkbox { width: 18px; height: 18px; cursor: pointer; margin: 0; }
+
         /* --- TOAST & MODALS --- */
         #toast { position: fixed; top: 20px; right: -300px; width: 280px; background: #333; color: #fff; padding: 15px; border-radius: 4px; transition: right 0.3s ease; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         #toast.show { right: 20px; }
@@ -91,10 +94,11 @@
 
         .dash-actions { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 15px; flex-wrap: wrap;}
         .search-bar { flex: 1; max-width: 400px; min-width: 250px;}
+        .action-group { display: flex; gap: 10px; flex-wrap: wrap; }
         
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 0.9rem; vertical-align: middle; }
         th { background: #fafafa; font-weight: bold; color: #555; text-transform: uppercase; font-size: 0.8rem; }
         tr:hover { background: #f8f9fc; }
         .action-btns { display: flex; gap: 8px; }
@@ -130,6 +134,7 @@
         .slider-group label { display: flex; justify-content: space-between; margin-bottom: 5px; text-transform: none; font-size: 0.7rem; }
         
         #preview-area { flex: 1; margin-left: var(--sidebar-width); display: flex; justify-content: center; padding: 40px; overflow-x: auto; min-height: 100vh; }
+        #batch-print-container { display: none; } /* Oculto normalmente, só exibe na impressão em lote */
         
         /* CONTROLE DE ESCALA PROPORCIONAL E ALFAIATARIA */
         .page { --scale: 1; width: calc(21cm * var(--scale)); height: calc(29.7cm * var(--scale)); background: white; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.2); font-family: 'Oswald', sans-serif; overflow: hidden; background-size: 100% 100%; background-repeat: no-repeat; color: #111; }
@@ -155,23 +160,15 @@
             letter-spacing: calc(var(--val-letter-spacing) * 1cm * var(--scale)); 
             margin-left: calc(var(--val-x) * 1cm * var(--scale)); 
             margin-bottom: calc(var(--val-y) * 1cm * var(--scale)); 
-            white-space: nowrap; /* Trava para nunca quebrar a linha e subir sobrepondo */
+            white-space: nowrap; 
         }
         
         /* CLASSES PARA ESPAÇAMENTO REFINADO VÍRGULA/CENTAVOS */
         .cents-superscript { 
-            font-size: 50%; 
-            vertical-align: super; 
-            line-height: 0; 
-            position: relative; 
-            top: -0.2em; 
-            letter-spacing: normal; /* Remove o esmagamento global para esta área */
-            margin-left: 0.03em; /* Aproximado um pouco mais a vírgula do número principal */
+            font-size: 50%; vertical-align: super; line-height: 0; position: relative; top: -0.2em; 
+            letter-spacing: normal; margin-left: 0.03em; 
         }
-        .cents-numbers {
-            margin-left: 0.02em; /* Aproximado a vírgula dos centavos (menor espaço) */
-            letter-spacing: -0.05em; /* Aproximado os números dos centavos entre si sem colar */
-        }
+        .cents-numbers { margin-left: 0.02em; letter-spacing: -0.05em; }
 
         #field-totais { position: absolute; top: calc(20.2cm * var(--scale)); left: calc(1.5cm * var(--scale)); right: calc(1cm * var(--scale)); border-top: calc(2px * var(--scale)) solid #000; border-bottom: calc(2px * var(--scale)) solid #000; padding: calc(0.1cm * var(--scale)) 0; display: flex; align-items: baseline; justify-content: center; }
         #field-totais span { font-size: calc(0.75cm * var(--scale)); font-weight: 700; }
@@ -192,21 +189,8 @@
         .page.avista #out-tot-praz, .page.avista #prazo-text-group, .page.avista .separator, .page.avista #out-v-vis { display: none !important; }
         .page.avista #field-vista-label { font-size: calc(1.35cm * var(--scale)) !important; }
 
-        /* CORREÇÃO DO ALINHAMENTO VERTICAL À VISTA */
-        .page.avista #field-valor-parcela {
-            bottom: auto; /* Remove a âncora inferior que jogava para cima */
-            top: 55%; /* Centraliza exatamente no meio do bloco de preço */
-            transform: scaleX(0.70) translateY(-50%); /* Centralização matemática perfeita */
-            transform-origin: center center;
-            margin-bottom: 0 !important;
-            /* Permite que a barra de Eixo Y continue funcionando mesmo no modo À Vista */
-            margin-top: calc(var(--val-y) * -1cm * var(--scale)); 
-        }
-
-        /* CORREÇÃO DO PREÇO A VISTA PROMOCIONAL PARA NÃO COBRIR "A VISTA" */
-        .page.size-A5.promocional.avista #field-valor-parcela {
-            top: calc(55% - 1.5cm) !important;
-        }
+        .page.avista #field-valor-parcela { bottom: auto; top: 55%; transform: scaleX(0.70) translateY(-50%); transform-origin: center center; margin-bottom: 0 !important; margin-top: calc(var(--val-y) * -1cm * var(--scale)); }
+        .page.size-A5.promocional.avista #field-valor-parcela { top: calc(55% - 1.5cm) !important; }
 
         .page.size-A4.padrao .garantia-item { bottom: calc((var(--b) * 1cm * var(--scale)) - 0.15cm) !important; }
         .page.size-A5.promocional #field-valor-parcela { bottom: 0.4cm !important; }
@@ -220,12 +204,11 @@
         .page.size-A5.promocional #g3-q { left: calc(((6cm * var(--scale)) - 2.9cm) + 9.0cm) !important; }
         .page.size-A5.promocional #g3-v, .page.size-A5.promocional #g3-t, .page.size-A5.promocional #g3-vis { left: calc(((8cm * var(--scale)) - 2.4cm) + 9.0cm) !important; }
         
-        /* AJUSTE A5 PADRÃO - 0.1cm para baixo e 0.25cm TOTAL para a esquerda (-0.15 original + -0.1 extra) */
         .page.size-A5.padrao .field { margin-top: 0.1cm !important; margin-left: -0.25cm !important; }
-        
         .page.size-A5.padrao #field-parcelas-container { margin-left: 0.4cm !important; }
         .page.size-A5.padrao .garantia-item { margin-bottom: 0.1cm !important; }
         .page.size-A5.padrao #g3-q, .page.size-A5.padrao #g3-v, .page.size-A5.padrao #g3-t, .page.size-A5.padrao #g3-vis { margin-left: -0.4cm !important; }
+        
         .page.size-A6.padrao #field-parcelas-container { margin-left: 0.25cm !important; } 
         .page.size-A6.padrao #field-totais { margin-top: -0.2cm !important; } 
         .page.size-A6.padrao .field { margin-left: 0.4cm !important; } 
@@ -240,33 +223,36 @@
 
         /* --- RESPONSIVIDADE PWA MOBILE TOTALMENTE REFEITA --- */
         @media (max-width: 768px) {
-            /* AJUSTE: Só empilha e muda o display SE a tela de editor estiver ATIVA (.active) */
             #editor-screen.active { flex-direction: column; }
             #control-panel { width: 100%; height: auto; position: relative; overflow: visible; border-right: none; border-bottom: 4px solid var(--zenir-blue); padding: 15px; }
             #preview-area { margin-left: 0; padding: 20px 10px; display: flex; flex-direction: column; align-items: center; min-height: auto; }
-            
-            /* Ajusta cabeçalho principal do dashboard */
             .dash-header { flex-direction: column; gap: 10px; text-align: center; }
             .dash-actions { flex-direction: column; }
+            .action-group { justify-content: center; width: 100%; }
             .nav-tabs { flex-wrap: wrap; }
             .tab-btn { flex: 1; text-align: center; font-size: 0.85rem; padding: 10px; }
-            
-            /* O cabeçalho do Editor (controles) vai ficar grudadinho no topo de forma limpa */
             .sticky-controls { position: sticky; top: 0; z-index: 1000; background: white; margin: -15px -15px 15px -15px; padding: 15px 15px 5px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-bottom: 1px solid #ddd; }
-            
-            /* Melhoria de Grids para não esmagar no celular */
             .grid-2 { grid-template-columns: 1fr; gap: 10px; }
         }
 
-        /* 🔴 MOTOR DE IMPRESSÃO BLINDADO 🔴 */
+        /* 🔴 MOTOR DE IMPRESSÃO BLINDADO - MODIFICADO PARA IMPRESSÃO EM LOTE 🔴 */
         @media print {
-            @page { margin: 0; }
             body * { visibility: hidden; }
-            #editor-screen { display: flex !important; }
-            #preview-area, #preview-area * { visibility: visible; }
             html, body { display: block !important; background: white !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            #preview-area { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; padding: 0 !important; background: transparent !important; overflow: visible !important; }
-            .page { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; background-image: none !important; background-color: white !important; page-break-inside: avoid !important; }
+            
+            /* LÓGICA DE IMPRESSÃO INDIVIDUAL (EDITOR) */
+            body:not(.batch-printing) #editor-screen { display: flex !important; }
+            body:not(.batch-printing) #preview-area, body:not(.batch-printing) #preview-area * { visibility: visible; }
+            body:not(.batch-printing) #preview-area { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; padding: 0 !important; background: transparent !important; overflow: visible !important; }
+            
+            /* LÓGICA DE IMPRESSÃO EM LOTE */
+            body.batch-printing #batch-print-container, body.batch-printing #batch-print-container * { visibility: visible; }
+            body.batch-printing #batch-print-container { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; padding: 0 !important; background: transparent !important; display: block !important; width: 100% !important; }
+
+            /* FORÇA QUEBRA DE PÁGINA PARA CADA CARTAZ (GARANTE QUE CADA A4, A5 OU A6 FIQUE EM UMA FOLHA SEPARADA DA IMPRESSORA) */
+            .page { position: relative !important; margin: 0 auto !important; box-shadow: none !important; border: none !important; background-image: none !important; background-color: white !important; page-break-after: always !important; break-after: page !important; }
+            .page:last-child { page-break-after: auto !important; break-after: auto !important; }
+            
             .print-hide { display: none !important; }
             #field-validade { color: #111 !important; } 
         }
@@ -288,6 +274,7 @@
     </div>
 </div>
 
+<!-- MODAL DE IMPRESSÃO RÁPIDA (ÚNICA) -->
 <div class="modal-overlay" id="quickPrintModal">
     <div class="modal-box">
         <h3>Impressão Rápida</h3>
@@ -308,6 +295,31 @@
         <div class="modal-actions">
             <button class="btn-outline" onclick="window.closeQuickPrint()">Cancelar</button>
             <button class="btn-zenir" onclick="window.executeQuickPrint()">Imprimir</button>
+        </div>
+    </div>
+</div>
+
+<!-- NOVO MODAL DE IMPRESSÃO EM LOTE -->
+<div class="modal-overlay" id="batchPrintModal">
+    <div class="modal-box">
+        <h3>Impressão em Lote</h3>
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Todos os <strong id="batch-print-qtd">0</strong> cartazes selecionados serão impressos nesta configuração:</p>
+        <label>Tamanho da Folha (Para todos)</label>
+        <select id="bp-tamanho" style="border-color: var(--zenir-red); border-width: 2px;">
+            <option value="A4">Tamanho A4 (Grande)</option>
+            <option value="A5">Tamanho A5 (Médio)</option>
+            <option value="A6">Tamanho A6 (Pequeno)</option>
+        </select>
+        <label>Tipo de Cartaz (Para todos)</label>
+        <select id="bp-tipo">
+            <option value="padrao">Padrão (Parcelado)</option>
+            <option value="promocional">Promocional (Parcelado)</option>
+            <option value="avista_padrao">Padrão (À Vista)</option>
+            <option value="avista_promocional">Promocional (À Vista)</option>
+        </select>
+        <div class="modal-actions">
+            <button class="btn-outline" onclick="window.closeBatchPrintModal()">Cancelar</button>
+            <button class="btn-zenir" onclick="window.executeBatchPrint()">Gerar e Imprimir</button>
         </div>
     </div>
 </div>
@@ -379,12 +391,16 @@
         <div id="tab-produtos" class="tab-content active">
             <div class="dash-actions">
                 <input type="text" id="search-input" class="search-bar" placeholder="🔍 Buscar por código, produto, ref ou marca..." oninput="window.filterTable()">
-                <button class="btn-zenir" onclick="window.openEditor(null)">+ Novo Cartaz</button>
+                <div class="action-group">
+                    <button id="btn-batch-print" class="btn-outline" style="display:none; border-color: var(--zenir-red); color: var(--zenir-red);" onclick="window.openBatchPrintModal()">🖨️ Imprimir Selecionados (<span id="batch-count">0</span>)</button>
+                    <button class="btn-zenir" onclick="window.openEditor(null)">+ Novo Cartaz</button>
+                </div>
             </div>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
+                            <th style="width: 40px; text-align: center;"><input type="checkbox" id="selectAll" class="custom-checkbox" onclick="window.toggleSelectAll()"></th>
                             <th>Código</th>
                             <th>Produto</th>
                             <th>Ref.</th>
@@ -394,7 +410,7 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <tr><td colspan="6" style="text-align:center;">Carregando produtos...</td></tr>
+                        <tr><td colspan="7" style="text-align:center;">Carregando produtos...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -515,7 +531,7 @@
 
         <hr style="margin: 25px 0 15px 0;">
         <button class="btn-zenir" style="width: 100%; margin-bottom: 10px; background-color: #28a745;" onclick="window.saveProduct()">💾 SALVAR PRODUTO</button>
-        <button class="btn-zenir" style="width: 100%; background: #666;" onclick="window.testPrint()">🖨️ IMPRIMIR</button>
+        <button class="btn-zenir" style="width: 100%; background: #666;" onclick="window.testPrint()">🖨️ IMPRIMIR ESTE</button>
         
         <details class="ajustes-details">
             <summary>Ajustes Finos (Valor Centro)</summary>
@@ -529,7 +545,7 @@
         </details>
     </div>
 
-    <!-- PREVIEW AREA -->
+    <!-- PREVIEW AREA: CARTAZ ÚNICO (USADO NO EDITOR E COMO MOLDE) -->
     <div id="preview-area">
         <div id="cartaz" class="page size-A4 padrao">
             <div id="field-produto" class="field"></div>
@@ -565,6 +581,9 @@
             <div class="garantia-item" style="--b: 2.5; --l: 18;" id="g3-vis"></div>
         </div>
     </div>
+
+    <!-- CONTAINER SECRETO PARA GERAR IMPRESSÃO EM LOTE -->
+    <div id="batch-print-container"></div>
 </div>
 
 <!-- LÓGICA PRINCIPAL COM FIREBASE E REGISTRO DO SERVICE WORKER (PWA) -->
@@ -573,18 +592,17 @@
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // REGISTRO DO SERVICE WORKER (TORNA O SITE INSTALÁVEL COMO APP)
+    // REGISTRO DO SERVICE WORKER
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js').then((reg) => {
-                console.log('Service Worker Registrado!', reg);
+                console.log('Service Worker Registrado!');
             }).catch((err) => {
                 console.log('Falha no Service Worker', err);
             });
         });
     }
 
-    // Inicialização Firebase 
     const firebaseConfig = {
         apiKey: "AIzaSyCyHazeYmummjS5PUz6i_sUufAm7eakyGg",
         authDomain: "cartaz-de-preco.firebaseapp.com",
@@ -611,8 +629,10 @@
     let currentPage = 1;
     const ITEMS_PER_PAGE = 20;
     
+    // GESTÃO DA SELEÇÃO (Para impressão em lote)
+    let selectedProductIds = new Set();
+    
     let allUsers = [];
-
     let currentEditingId = null;
     let currentPrintTargetId = null;
 
@@ -622,55 +642,47 @@
     };
 
     // ==========================================
-    // DECLARAÇÃO GLOBAL DE FUNÇÕES (MÁXIMA SEGURANÇA NO ESCOPO)
+    // FUNÇÕES GLOBAIS ÚTEIS E CONTROLE DE TELA
     // ==========================================
     window.parseMoney = function(str) {
         if (!str) return 0;
         let clean = str.replace(/\./g, '').replace(',', '.');
         return parseFloat(clean.replace(/[^\d.]/g, '')) || 0;
     };
-
     window.formatMoney = function(num) { return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
-
     window.showToast = function(msg, type='success') {
         const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.className = type === 'success' ? 'success show' : 'error show';
+        t.innerText = msg; t.className = type === 'success' ? 'success show' : 'error show';
         setTimeout(() => { t.classList.remove('show'); }, 3000);
     };
-
     window.showScreen = function(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
     };
-
-    window.toggleAuthMode = function(mode) {
-        document.getElementById('login-box').style.display = mode === 'login' ? 'block' : 'none';
-        document.getElementById('register-box').style.display = mode === 'register' ? 'block' : 'none';
-    };
-
-    window.switchTab = function(tab) {
-        document.getElementById('btn-tab-produtos').classList.remove('active');
-        document.getElementById('btn-tab-usuarios').classList.remove('active');
-        document.getElementById('tab-produtos').classList.remove('active');
-        document.getElementById('tab-usuarios').classList.remove('active');
-
-        document.getElementById('btn-tab-' + tab).classList.add('active');
-        document.getElementById('tab-' + tab).classList.add('active');
-    };
-
     window.getTextVal = function(id) { const el = document.getElementById(id); return el ? el.value : ""; };
     window.setSafeText = function(id, text) { const el = document.getElementById(id); if (el) el.innerText = text || ""; };
     window.setInputVal = function(id, val) { const el = document.getElementById(id); if(el) el.value = val || ""; };
+
+    // ==========================================
+    // AUTOMAÇÃO DO TAMANHO DE FOLHA DA IMPRESSORA DO NAVEGADOR
+    // ==========================================
+    window.setPrintPageSize = function(tamanho) {
+        let styleEl = document.getElementById('dynamic-print-style');
+        if (!styleEl) {
+            styleEl = document.createElement('style');
+            styleEl.id = 'dynamic-print-style';
+            document.head.appendChild(styleEl);
+        }
+        // Injeta CSS @page para forçar a impressora do navegador a adotar o papel correto
+        styleEl.innerHTML = `@page { size: ${tamanho} portrait; margin: 0; }`;
+    };
 
     // ==========================================
     // AUTENTICAÇÃO E PERMISSÕES
     // ==========================================
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            currentUser = user;
-            isAdmin = (user.email === ADMIN_EMAIL);
-            
+            currentUser = user; isAdmin = (user.email === ADMIN_EMAIL);
             try {
                 const userDocSnap = await getDoc(doc(db, "users", user.uid));
                 if (userDocSnap.exists()) {
@@ -678,10 +690,7 @@
                     if (isAdmin || currentUserDoc.status === 'approved') {
                         const primeiroNome = currentUserDoc.nome ? currentUserDoc.nome.split(' ')[0] : user.email.split('@')[0];
                         document.getElementById('user-display-name').innerText = "Olá, " + primeiroNome;
-                        setupDashboardBasedOnRole();
-                        window.showScreen('dashboard-screen');
-                        window.loadProducts();
-                        if (isAdmin) window.loadUsers();
+                        setupDashboardBasedOnRole(); window.showScreen('dashboard-screen'); window.loadProducts(); if (isAdmin) window.loadUsers();
                     } else { window.showScreen('pending-screen'); }
                 } else {
                     if(isAdmin) {
@@ -698,11 +707,9 @@
 
     function setupDashboardBasedOnRole() {
         if (isAdmin) {
-            document.getElementById('admin-users-manager').style.display = 'block';
-            document.getElementById('standard-user-profile').style.display = 'none';
+            document.getElementById('admin-users-manager').style.display = 'block'; document.getElementById('standard-user-profile').style.display = 'none';
         } else {
-            document.getElementById('admin-users-manager').style.display = 'none';
-            document.getElementById('standard-user-profile').style.display = 'block';
+            document.getElementById('admin-users-manager').style.display = 'none'; document.getElementById('standard-user-profile').style.display = 'block';
             window.setInputVal('prof-nome', currentUserDoc.nome); window.setInputVal('prof-whatsapp', currentUserDoc.whatsapp);
             window.setInputVal('prof-filial', currentUserDoc.filial); window.setInputVal('prof-email', currentUserDoc.email);
         }
@@ -712,28 +719,27 @@
         const e = window.getTextVal('login-email'); const p = window.getTextVal('login-pass');
         if(!e || !p) return window.showToast('Preencha email e senha', 'error');
         window.showScreen('loading-screen');
-        try { await signInWithEmailAndPassword(auth, e, p); } 
-        catch (err) { window.showScreen('auth-screen'); window.showToast('Senha ou email incorretos', 'error'); }
+        try { await signInWithEmailAndPassword(auth, e, p); } catch (err) { window.showScreen('auth-screen'); window.showToast('Senha ou email incorretos', 'error'); }
     };
 
     window.doRegister = async function() {
-        const n = window.getTextVal('reg-nome'); const w = window.getTextVal('reg-whatsapp');
-        const e = window.getTextVal('reg-email'); const f = window.getTextVal('reg-filial');
-        const p = window.getTextVal('reg-pass'); const p2 = window.getTextVal('reg-pass-conf');
-
+        const n = window.getTextVal('reg-nome'); const w = window.getTextVal('reg-whatsapp'); const e = window.getTextVal('reg-email'); const f = window.getTextVal('reg-filial'); const p = window.getTextVal('reg-pass'); const p2 = window.getTextVal('reg-pass-conf');
         if(!n || !e || !p) return window.showToast('Nome, E-mail e Senha são obrigatórios', 'error');
         if(p !== p2) return window.showToast('As senhas não coincidem', 'error');
-
         window.showScreen('loading-screen');
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, e, p);
             await setDoc(doc(db, "users", userCredential.user.uid), { nome: n, whatsapp: w, email: e, filial: f, status: 'pending', criadoEm: new Date().toISOString() });
-        } catch (err) { window.showScreen('auth-screen'); window.showToast('Erro ao criar conta: ' + err.message, 'error'); }
+        } catch (err) { window.showScreen('auth-screen'); window.showToast('Erro ao criar conta', 'error'); }
     };
 
-    window.doLogout = async function() { 
-        window.setInputVal('login-email', ''); window.setInputVal('login-pass', '');
-        await signOut(auth); 
+    window.doLogout = async function() { window.setInputVal('login-email', ''); window.setInputVal('login-pass', ''); await signOut(auth); };
+    window.toggleAuthMode = function(mode) { document.getElementById('login-box').style.display = mode === 'login' ? 'block' : 'none'; document.getElementById('register-box').style.display = mode === 'register' ? 'block' : 'none'; };
+
+    window.switchTab = function(tab) {
+        document.getElementById('btn-tab-produtos').classList.remove('active'); document.getElementById('btn-tab-usuarios').classList.remove('active');
+        document.getElementById('tab-produtos').classList.remove('active'); document.getElementById('tab-usuarios').classList.remove('active');
+        document.getElementById('btn-tab-' + tab).classList.add('active'); document.getElementById('tab-' + tab).classList.add('active');
     };
 
     window.updateProfile = async function() {
@@ -743,8 +749,8 @@
             await updateDoc(doc(db, "users", currentUser.uid), { nome: n, whatsapp: w, filial: f });
             currentUserDoc.nome = n; currentUserDoc.whatsapp = w; currentUserDoc.filial = f;
             document.getElementById('user-display-name').innerText = "Olá, " + n.split(' ')[0];
-            window.showToast('Perfil atualizado com sucesso!');
-        } catch(e) { window.showToast('Erro ao atualizar perfil', 'error'); }
+            window.showToast('Perfil atualizado!');
+        } catch(e) { window.showToast('Erro ao atualizar', 'error'); }
     };
 
     // ==========================================
@@ -754,53 +760,27 @@
         if (!isAdmin) return;
         try {
             const querySnapshot = await getDocs(collection(db, "users"));
-            allUsers = []; querySnapshot.forEach((doc) => { allUsers.push({ id: doc.id, ...doc.data() }); });
-            window.renderUsersTable();
+            allUsers = []; querySnapshot.forEach((doc) => { allUsers.push({ id: doc.id, ...doc.data() }); }); window.renderUsersTable();
         } catch(e) {}
     };
 
     window.renderUsersTable = function() {
-        const tbody = document.getElementById('users-table-body');
-        tbody.innerHTML = '';
+        const tbody = document.getElementById('users-table-body'); tbody.innerHTML = '';
         allUsers.forEach(u => {
-            const isMe = u.email === ADMIN_EMAIL;
-            const statusClass = u.status === 'approved' ? 'approved' : 'pending';
-            const statusText = u.status === 'approved' ? 'Aprovado' : 'Aguardando Liberação';
-            
+            const isMe = u.email === ADMIN_EMAIL; const statusClass = u.status === 'approved' ? 'approved' : 'pending'; const statusText = u.status === 'approved' ? 'Aprovado' : 'Aguardando Liberação';
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${u.nome || '-'}</strong></td><td>${u.email}</td><td>${u.filial || '-'}</td><td>${u.whatsapp || '-'}</td>
-                <td><span class="status-badge ${statusClass}">${isMe ? 'Admin' : statusText}</span></td>
-                <td class="action-btns">
-                    ${!isMe ? `
-                        ${u.status === 'pending' ? `<button class="btn-zenir" style="background:#28a745;" onclick="window.toggleUserStatus('${u.id}', 'approved')">Aprovar Acesso</button>` : `<button class="btn-outline" style="color:var(--zenir-red); border-color:var(--zenir-red);" onclick="window.toggleUserStatus('${u.id}', 'pending')">Bloquear</button>`}
-                        <button class="btn-zenir red" onclick="window.askDeleteUser('${u.id}')">🗑️</button>
-                    ` : '<span style="font-size:0.8rem; color:#888;">Nenhuma ação</span>'}
-                </td>
-            `;
+            tr.innerHTML = `<td><strong>${u.nome || '-'}</strong></td><td>${u.email}</td><td>${u.filial || '-'}</td><td>${u.whatsapp || '-'}</td><td><span class="status-badge ${statusClass}">${isMe ? 'Admin' : statusText}</span></td><td class="action-btns">${!isMe ? `${u.status === 'pending' ? `<button class="btn-zenir" style="background:#28a745;" onclick="window.toggleUserStatus('${u.id}', 'approved')">Aprovar Acesso</button>` : `<button class="btn-outline" style="color:var(--zenir-red); border-color:var(--zenir-red);" onclick="window.toggleUserStatus('${u.id}', 'pending')">Bloquear</button>`}<button class="btn-zenir red" onclick="window.askDeleteUser('${u.id}')">🗑️</button>` : '<span style="font-size:0.8rem; color:#888;">Nenhuma ação</span>'}</td>`;
             tbody.appendChild(tr);
         });
     };
 
-    window.toggleUserStatus = async function(uid, newStatus) {
-        try { await updateDoc(doc(db, "users", uid), { status: newStatus }); window.showToast(newStatus === 'approved' ? 'Acesso liberado!' : 'Acesso bloqueado!'); window.loadUsers(); } catch(e) {}
-    };
-
+    window.toggleUserStatus = async function(uid, newStatus) { try { await updateDoc(doc(db, "users", uid), { status: newStatus }); window.showToast(newStatus === 'approved' ? 'Acesso liberado!' : 'Acesso bloqueado!'); window.loadUsers(); } catch(e) {} };
     let deleteUserTarget = null;
-    window.askDeleteUser = function(uid) {
-        deleteUserTarget = uid;
-        document.getElementById('confirmTitle').innerText = 'Excluir Usuário'; document.getElementById('confirmText').innerText = 'Tem certeza que deseja excluir os dados deste usuário?';
-        document.getElementById('confirmBtnAction').onclick = window.executeDeleteUser; document.getElementById('confirmModal').classList.add('active');
-    };
-
-    window.executeDeleteUser = async function() {
-        if(!deleteUserTarget) return;
-        try { await deleteDoc(doc(db, "users", deleteUserTarget)); window.showToast('Usuário excluído com sucesso.'); window.loadUsers(); } catch(e) {}
-        window.closeConfirmModal();
-    };
+    window.askDeleteUser = function(uid) { deleteUserTarget = uid; document.getElementById('confirmTitle').innerText = 'Excluir Usuário'; document.getElementById('confirmText').innerText = 'Tem certeza que deseja excluir?'; document.getElementById('confirmBtnAction').onclick = window.executeDeleteUser; document.getElementById('confirmModal').classList.add('active'); };
+    window.executeDeleteUser = async function() { if(!deleteUserTarget) return; try { await deleteDoc(doc(db, "users", deleteUserTarget)); window.showToast('Usuário excluído.'); window.loadUsers(); } catch(e) {} window.closeConfirmModal(); };
 
     // ==========================================
-    // PRODUTOS (DASHBOARD)
+    // PRODUTOS & SELEÇÃO DE LOTE (DASHBOARD)
     // ==========================================
     window.loadProducts = async function() {
         if (!currentUser) return;
@@ -814,96 +794,164 @@
 
     window.filterTable = function() {
         const term = window.getTextVal('search-input').toLowerCase();
-        currentFilteredProducts = allProducts.filter(p => 
-            (p.codigo || "").toLowerCase().includes(term) || 
-            (p.produto || "").toLowerCase().includes(term) || 
-            (p.ref || "").toLowerCase().includes(term) || 
-            (p.marca || "").toLowerCase().includes(term)
-        );
+        currentFilteredProducts = allProducts.filter(p => (p.codigo || "").toLowerCase().includes(term) || (p.produto || "").toLowerCase().includes(term) || (p.ref || "").toLowerCase().includes(term) || (p.marca || "").toLowerCase().includes(term));
         currentPage = 1; window.renderTable();
     };
 
     window.renderTable = function() {
-        const tbody = document.getElementById('table-body');
-        tbody.innerHTML = '';
-        if(currentFilteredProducts.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 30px;">Nenhum produto encontrado.</td></tr>'; window.renderPagination(0); return; }
+        const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
+        if(currentFilteredProducts.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 30px;">Nenhum produto encontrado.</td></tr>'; window.renderPagination(0); window.updateSelectionCountUI(); return; }
 
-        const totalPages = Math.ceil(currentFilteredProducts.length / ITEMS_PER_PAGE);
-        if(currentPage > totalPages) currentPage = totalPages;
+        const totalPages = Math.ceil(currentFilteredProducts.length / ITEMS_PER_PAGE); if(currentPage > totalPages) currentPage = totalPages;
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const pageData = currentFilteredProducts.slice(startIdx, startIdx + ITEMS_PER_PAGE);
 
         pageData.forEach(p => {
             const tr = document.createElement('tr');
+            const isChecked = selectedProductIds.has(p.id) ? 'checked' : '';
             const deleteBtnHtml = isAdmin ? `<button class="btn-zenir red" onclick="window.askDeleteProduct('${p.id}')">🗑️</button>` : '';
             tr.innerHTML = `
+                <td style="text-align: center;"><input type="checkbox" class="custom-checkbox prod-checkbox" value="${p.id}" onclick="window.toggleProductSelection('${p.id}')" ${isChecked}></td>
                 <td><strong>${p.codigo || '-'}</strong></td><td>${p.produto || '-'}</td><td>${p.ref || '-'}</td><td>${p.marca || '-'}</td>
                 <td style="color:var(--zenir-blue); font-weight:bold;">R$ ${p.v_vis || '-'}</td>
-                <td class="action-btns">
-                    <button class="btn-outline" onclick="window.quickPrintSetup('${p.id}')">🖨️ Imprimir</button>
-                    <button class="btn-zenir" style="background:#f39c12;" onclick="window.openEditor('${p.id}')">✏️ Editar</button>
-                    ${deleteBtnHtml}
-                </td>
+                <td class="action-btns"><button class="btn-outline" onclick="window.quickPrintSetup('${p.id}')">🖨️ Imprimir</button><button class="btn-zenir" style="background:#f39c12;" onclick="window.openEditor('${p.id}')">✏️ Editar</button>${deleteBtnHtml}</td>
             `;
             tbody.appendChild(tr);
         });
         window.renderPagination(totalPages);
+        window.updateSelectionCountUI(); // Atualiza a contagem e a bolinha do "Selecionar Todos"
     };
 
+    // Controle do Checkbox "Selecionar Todos da Página"
+    window.toggleSelectAll = function() {
+        const isChecked = document.getElementById('selectAll').checked;
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        const pageData = currentFilteredProducts.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+        
+        pageData.forEach(p => {
+            if (isChecked) selectedProductIds.add(p.id);
+            else selectedProductIds.delete(p.id);
+        });
+        window.renderTable();
+    };
+
+    // Controle de Clique em Checkbox Individual
+    window.toggleProductSelection = function(id) {
+        if (selectedProductIds.has(id)) selectedProductIds.delete(id);
+        else selectedProductIds.add(id);
+        window.updateSelectionCountUI();
+    };
+
+    // Atualiza botão de Imprimir Lote e status do Select All
+    window.updateSelectionCountUI = function() {
+        const count = selectedProductIds.size;
+        const btn = document.getElementById('btn-batch-print');
+        
+        if (count > 0) { btn.style.display = 'inline-block'; document.getElementById('batch-count').innerText = count; } 
+        else { btn.style.display = 'none'; }
+        
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        const pageData = currentFilteredProducts.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+        const allOnPageSelected = pageData.length > 0 && pageData.every(p => selectedProductIds.has(p.id));
+        const selectAllCb = document.getElementById('selectAll');
+        if(selectAllCb) selectAllCb.checked = allOnPageSelected;
+    };
+
+    // ==========================================
+    // EXECUÇÃO DA IMPRESSÃO EM LOTE
+    // ==========================================
+    window.openBatchPrintModal = function() {
+        if (selectedProductIds.size === 0) return;
+        document.getElementById('batch-print-qtd').innerText = selectedProductIds.size;
+        document.getElementById('batchPrintModal').classList.add('active');
+    };
+
+    window.closeBatchPrintModal = function() { document.getElementById('batchPrintModal').classList.remove('active'); };
+
+    window.executeBatchPrint = function() {
+        const tam = document.getElementById('bp-tamanho').value;
+        const tipo = document.getElementById('bp-tipo').value;
+        
+        // 1. Configura tamanho de papel pro Navegador
+        window.setPrintPageSize(tam);
+        
+        // 2. Prepara container invisível de lote
+        const batchContainer = document.getElementById('batch-print-container');
+        batchContainer.innerHTML = '';
+        document.body.classList.add('batch-printing'); // Ativa CSS para Lote
+
+        // Vamos preservar o estado atual do form caso o usuário estivesse mexendo em algo
+        const backupForm = window.getFormData();
+
+        // 3. Processa e clona cada cartaz selecionado
+        const originalCartaz = document.getElementById('cartaz');
+        selectedProductIds.forEach(id => {
+            const prod = allProducts.find(p => p.id === id);
+            if (prod) {
+                window.populateForm(prod);
+                
+                // Aplica as classes dinamicamente no original
+                originalCartaz.className = 'page size-' + tam;
+                if (tipo === 'padrao') originalCartaz.classList.add('padrao');
+                else if (tipo === 'promocional') originalCartaz.classList.add('promocional');
+                else if (tipo === 'avista_padrao') originalCartaz.classList.add('avista', 'padrao');
+                else if (tipo === 'avista_promocional') originalCartaz.classList.add('avista', 'promocional');
+
+                window.autoCalcular();
+                window.update();
+                window.applyAdjustments(); // Usará os ajustes finos salvos daquele produto
+
+                // Clona e guarda
+                const clone = originalCartaz.cloneNode(true);
+                clone.removeAttribute('id'); // Tira o ID pra não bugar DOM
+                batchContainer.appendChild(clone);
+            }
+        });
+
+        // Restaura formulário
+        window.populateForm(backupForm);
+        window.update();
+        window.closeBatchPrintModal();
+
+        // 4. Manda imprimir
+        setTimeout(() => { 
+            window.print(); 
+            // 5. Limpa a bagunça após fechar a janela de impressão
+            setTimeout(() => {
+                document.body.classList.remove('batch-printing');
+                batchContainer.innerHTML = '';
+            }, 1000);
+        }, 500);
+    };
+
+    // ==========================================
+    // SISTEMA DE PÁGINAÇÃO E DELETAR
+    // ==========================================
     window.renderPagination = function(totalPages) {
-        const container = document.getElementById('pagination-container');
-        container.innerHTML = ''; if (totalPages <= 1) return;
+        const container = document.getElementById('pagination-container'); container.innerHTML = ''; if (totalPages <= 1) return;
         let pagesToDisplay = new Set([1, totalPages]);
         for(let i = Math.max(1, currentPage - 1); i <= Math.min(totalPages, currentPage + 1); i++) { pagesToDisplay.add(i); }
-        const sortedPages = Array.from(pagesToDisplay).sort((a,b) => a - b);
-        let lastAdded = 0;
+        const sortedPages = Array.from(pagesToDisplay).sort((a,b) => a - b); let lastAdded = 0;
         sortedPages.forEach(p => {
-            if (p - lastAdded > 1) {
-                const dots = document.createElement('button'); dots.className = 'page-btn dots'; dots.innerText = '...'; dots.onclick = () => window.openPagesModal(totalPages); container.appendChild(dots);
-            }
+            if (p - lastAdded > 1) { const dots = document.createElement('button'); dots.className = 'page-btn dots'; dots.innerText = '...'; dots.onclick = () => window.openPagesModal(totalPages); container.appendChild(dots); }
             const btn = document.createElement('button'); btn.className = `page-btn ${p === currentPage ? 'active' : ''}`; btn.innerText = p; 
-            btn.onclick = () => { 
-                currentPage = p; 
-                window.renderTable(); 
-                // Faz a tela rolar pra cima suavemente
-                window.scrollTo({ top: 0, behavior: 'smooth' }); 
-            }; 
-            container.appendChild(btn);
-            lastAdded = p;
+            btn.onclick = () => { currentPage = p; window.renderTable(); window.scrollTo({ top: 0, behavior: 'smooth' }); }; 
+            container.appendChild(btn); lastAdded = p;
         });
     };
-
     window.openPagesModal = function(totalPages) {
         const grid = document.getElementById('pages-grid-container'); grid.innerHTML = '';
         for(let i = 1; i <= totalPages; i++) {
             const btn = document.createElement('button'); btn.className = `page-btn ${i === currentPage ? 'active' : ''}`; btn.innerText = i; 
-            btn.onclick = () => { 
-                currentPage = i; 
-                window.renderTable(); 
-                window.closePagesModal(); 
-                // Faz a tela rolar pra cima suavemente
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }; 
-            grid.appendChild(btn);
-        }
-        document.getElementById('pagesModal').classList.add('active');
+            btn.onclick = () => { currentPage = i; window.renderTable(); window.closePagesModal(); window.scrollTo({ top: 0, behavior: 'smooth' }); }; grid.appendChild(btn);
+        } document.getElementById('pagesModal').classList.add('active');
     };
-
     window.closePagesModal = function() { document.getElementById('pagesModal').classList.remove('active'); };
 
     let deleteProductTarget = null;
-    window.askDeleteProduct = function(id) {
-        if(!isAdmin) return;
-        deleteProductTarget = id;
-        document.getElementById('confirmTitle').innerText = 'Excluir Produto'; document.getElementById('confirmText').innerText = 'Tem certeza que deseja excluir permanentemente este cartaz?';
-        document.getElementById('confirmBtnAction').onclick = window.executeDeleteProduct; document.getElementById('confirmModal').classList.add('active');
-    };
+    window.askDeleteProduct = function(id) { if(!isAdmin) return; deleteProductTarget = id; document.getElementById('confirmTitle').innerText = 'Excluir Produto'; document.getElementById('confirmText').innerText = 'Tem certeza que deseja excluir permanentemente este cartaz?'; document.getElementById('confirmBtnAction').onclick = window.executeDeleteProduct; document.getElementById('confirmModal').classList.add('active'); };
     window.closeConfirmModal = function() { document.getElementById('confirmModal').classList.remove('active'); };
-    window.executeDeleteProduct = async function() {
-        if(!deleteProductTarget) return;
-        try { await deleteDoc(doc(db, "produtos", deleteProductTarget)); window.showToast('Produto excluído com sucesso.'); window.loadProducts(); } catch(e) {}
-        window.closeConfirmModal();
-    };
+    window.executeDeleteProduct = async function() { if(!deleteProductTarget) return; try { await deleteDoc(doc(db, "produtos", deleteProductTarget)); selectedProductIds.delete(deleteProductTarget); window.showToast('Produto excluído com sucesso.'); window.loadProducts(); } catch(e) {} window.closeConfirmModal(); };
 
     // ==========================================
     // EDITOR <-> BANCO E GERADOR
@@ -911,20 +959,11 @@
     window.openEditor = function(id) {
         currentEditingId = id;
         if (id) { const prod = allProducts.find(p => p.id === id); if(prod) window.populateForm(prod); } else { window.clearForm(); }
-        window.showScreen('editor-screen'); 
-        
-        // Rolar página para o topo no Mobile e Desktop
-        window.scrollTo({ top: 0, behavior: 'auto' });
-        document.getElementById('control-panel').scrollTop = 0;
-        
+        window.showScreen('editor-screen'); window.scrollTo({ top: 0, behavior: 'auto' }); document.getElementById('control-panel').scrollTop = 0;
         setTimeout(() => { window.autoCalcular(); window.toggleCartazTipo(); window.applyAdjustments(); }, 100);
     };
 
-    window.closeEditor = function() { 
-        currentEditingId = null; 
-        window.showScreen('dashboard-screen'); 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    window.closeEditor = function() { currentEditingId = null; window.showScreen('dashboard-screen'); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
     window.getFormData = function() {
         return {
@@ -946,15 +985,7 @@
         if(data.g1) { window.setInputVal('in-g1-q', data.g1.q); window.setInputVal('in-g1-v', data.g1.v); window.setInputVal('in-g1-t', data.g1.t); }
         if(data.g2) { window.setInputVal('in-g2-q', data.g2.q); window.setInputVal('in-g2-v', data.g2.v); window.setInputVal('in-g2-t', data.g2.t); }
         if(data.g3) { window.setInputVal('in-g3-q', data.g3.q); window.setInputVal('in-g3-v', data.g3.v); window.setInputVal('in-g3-t', data.g3.t); }
-        
-        if(data.ajustes) { 
-            window.setInputVal('adj-size', data.ajustes.size || 10.2); 
-            window.setInputVal('adj-spacing', data.ajustes.spacing || -0.55); 
-            window.setInputVal('adj-x', data.ajustes.x || 0); 
-            window.setInputVal('adj-y', data.ajustes.y || -0.8); 
-        } else { 
-            window.resetAdjustments(); 
-        }
+        if(data.ajustes) { window.setInputVal('adj-size', data.ajustes.size || 10.2); window.setInputVal('adj-spacing', data.ajustes.spacing || -0.55); window.setInputVal('adj-x', data.ajustes.x || 0); window.setInputVal('adj-y', data.ajustes.y || -0.8); } else { window.resetAdjustments(); }
     };
 
     window.clearForm = function() {
@@ -967,21 +998,30 @@
         try { if (currentEditingId) { await updateDoc(doc(db, "produtos", currentEditingId), data); window.showToast('Produto atualizado!'); } else { await addDoc(collection(db, "produtos"), data); window.showToast('Novo produto cadastrado!'); } window.closeEditor(); window.loadProducts(); } catch(e) {}
     };
 
-    window.quickPrintSetup = function(id) {
-        currentPrintTargetId = id; document.getElementById('quickPrintModal').classList.add('active'); const prod = allProducts.find(p => p.id === id); if(prod) { window.setInputVal('qp-tamanho', prod.tamanho || 'A4'); window.setInputVal('qp-tipo', prod.tipo || 'padrao'); }
-    };
-    
+    window.quickPrintSetup = function(id) { currentPrintTargetId = id; document.getElementById('quickPrintModal').classList.add('active'); const prod = allProducts.find(p => p.id === id); if(prod) { window.setInputVal('qp-tamanho', prod.tamanho || 'A4'); window.setInputVal('qp-tipo', prod.tipo || 'padrao'); } };
     window.closeQuickPrint = function() { document.getElementById('quickPrintModal').classList.remove('active'); currentPrintTargetId = null; };
 
+    // IMPRESSÃO INDIVIDUAL (TELA PRINCIPAL)
     window.executeQuickPrint = function() {
         if(!currentPrintTargetId) return; const prod = allProducts.find(p => p.id === currentPrintTargetId); if(!prod) return;
         window.populateForm(prod); const tam = window.getTextVal('qp-tamanho'); const tipo = window.getTextVal('qp-tipo');
         const cartaz = document.getElementById('cartaz'); cartaz.classList.remove('promocional', 'avista', 'padrao', 'size-A4', 'size-A5', 'size-A6'); cartaz.classList.add('size-' + tam);
         if (tipo === 'padrao') cartaz.classList.add('padrao'); else if (tipo === 'promocional') cartaz.classList.add('promocional'); else if (tipo === 'avista_padrao') cartaz.classList.add('avista', 'padrao'); else if (tipo === 'avista_promocional') cartaz.classList.add('avista', 'promocional');
-        window.autoCalcular(); window.update(); window.applyAdjustments(); window.closeQuickPrint(); setTimeout(() => { window.print(); }, 100); 
+        window.autoCalcular(); window.update(); window.applyAdjustments(); window.closeQuickPrint(); 
+        
+        // Aplica o tamanho na impressora do navegador antes de imprimir
+        window.setPrintPageSize(tam);
+        document.body.classList.remove('batch-printing'); // Garante que não ta em modo lote
+        setTimeout(() => { window.print(); }, 100); 
     };
 
-    window.testPrint = function() { window.print(); };
+    // IMPRESSÃO INDIVIDUAL (DENTRO DO EDITOR)
+    window.testPrint = function() { 
+        const tam = window.getTextVal('in-tamanho-cartaz');
+        window.setPrintPageSize(tam); // Aplica o tamanho na impressora
+        document.body.classList.remove('batch-printing');
+        window.print(); 
+    };
 
     window.autoCalcular = function() {
         const condicao = window.getTextVal('in-condicao'); const parcelasStr = window.getTextVal('in-parcelas'); const vistaStr = window.getTextVal('in-v-vis');
@@ -997,30 +1037,11 @@
     };
 
     window.calcGarantia = function(num, origin) {
-        const qStr = window.getTextVal(`in-g${num}-q`);
-        const vStr = window.getTextVal(`in-g${num}-v`);
-        const tStr = window.getTextVal(`in-g${num}-t`);
-
+        const qStr = window.getTextVal(`in-g${num}-q`); const vStr = window.getTextVal(`in-g${num}-v`); const tStr = window.getTextVal(`in-g${num}-t`);
         const q = parseInt(qStr, 10);
-
         if (q > 0) {
-            if (origin === 't' && tStr) {
-                const t = window.parseMoney(tStr);
-                window.setInputVal(`in-g${num}-v`, window.formatMoney(t / q));
-            } else if (origin === 'v' && vStr) {
-                const v = window.parseMoney(vStr);
-                window.setInputVal(`in-g${num}-t`, window.formatMoney(v * q));
-            } else if (origin === 'q') {
-                if (tStr) {
-                    const t = window.parseMoney(tStr);
-                    window.setInputVal(`in-g${num}-v`, window.formatMoney(t / q));
-                } else if (vStr) {
-                    const v = window.parseMoney(vStr);
-                    window.setInputVal(`in-g${num}-t`, window.formatMoney(v * q));
-                }
-            }
-        }
-        window.update();
+            if (origin === 't' && tStr) { const t = window.parseMoney(tStr); window.setInputVal(`in-g${num}-v`, window.formatMoney(t / q)); } else if (origin === 'v' && vStr) { const v = window.parseMoney(vStr); window.setInputVal(`in-g${num}-t`, window.formatMoney(v * q)); } else if (origin === 'q') { if (tStr) { const t = window.parseMoney(tStr); window.setInputVal(`in-g${num}-v`, window.formatMoney(t / q)); } else if (vStr) { const v = window.parseMoney(vStr); window.setInputVal(`in-g${num}-t`, window.formatMoney(v * q)); } }
+        } window.update();
     };
 
     window.update = function() {
@@ -1029,15 +1050,11 @@
         const parcelas = window.getTextVal('in-parcelas'); window.setSafeText('out-parcelas', parcelas ? parcelas + 'x' : '');
         const cartaz = document.getElementById('cartaz'); 
         
-        // --- SCRIPT DOS CENTAVOS SUPERIORES ---
         let valorParcelaTexto = cartaz.classList.contains('avista') ? window.getTextVal('in-v-vis') : window.getTextVal('in-v-parc');
         if (valorParcelaTexto && valorParcelaTexto.includes(',')) {
             let partes = valorParcelaTexto.split(',');
             document.getElementById('field-valor-parcela').innerHTML = partes[0] + '<span class="cents-superscript">,<span class="cents-numbers">' + partes[1] + '</span></span>';
-        } else {
-            window.setSafeText('field-valor-parcela', valorParcelaTexto);
-        }
-        // --------------------------------------------------------------
+        } else { window.setSafeText('field-valor-parcela', valorParcelaTexto); }
 
         const totalP = window.getTextVal('in-tot-praz'); window.setSafeText('out-tot-praz', totalP ? '= R$ ' + totalP : ''); const totalV = window.getTextVal('in-v-vis'); window.setSafeText('out-v-vis', totalV ? 'R$ ' + totalV : '');
         const condicao = window.getTextVal('in-condicao'); const pLabel = document.getElementById('field-prazo-label'); const pSub = document.getElementById('field-prazo-sublabel');
@@ -1052,9 +1069,7 @@
         document.documentElement.style.setProperty('--val-font-size', s); document.documentElement.style.setProperty('--val-letter-spacing', sp); document.documentElement.style.setProperty('--val-x', x); document.documentElement.style.setProperty('--val-y', y);
     };
 
-    window.resetAdjustments = function() {
-        ['adj-size', 'adj-spacing', 'adj-x', 'adj-y'].forEach((id, i) => { let el = document.getElementById(id); if(el) el.value = [10.2, -0.55, 0, -0.8][i]; }); window.applyAdjustments();
-    };
+    window.resetAdjustments = function() { ['adj-size', 'adj-spacing', 'adj-x', 'adj-y'].forEach((id, i) => { let el = document.getElementById(id); if(el) el.value = [10.2, -0.55, 0, -0.8][i]; }); window.applyAdjustments(); };
 
     window.toggleCartazTipo = function() {
         const tamanho = window.getTextVal('in-tamanho-cartaz'); const tipo = window.getTextVal('in-tipo-cartaz'); const cartaz = document.getElementById('cartaz'); if (!cartaz) return;
