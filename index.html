@@ -221,7 +221,7 @@
         .page.size-A6.padrao #g3-q { left: calc(((6cm * var(--scale)) - 1.6cm) + 6cm) !important; }
         .page.size-A6.padrao #g3-v, .page.size-A6.padrao #g3-t, .page.size-A6.padrao #g3-vis { left: calc(((8cm * var(--scale)) - 1.7cm) + 6cm) !important; }
 
-        /* --- RESPONSIVIDADE PWA MOBILE TOTALMENTE REFEITA --- */
+        /* --- RESPONSIVIDADE PWA MOBILE --- */
         @media (max-width: 768px) {
             #editor-screen.active { flex-direction: column; }
             #control-panel { width: 100%; height: auto; position: relative; overflow: visible; border-right: none; border-bottom: 4px solid var(--zenir-blue); padding: 15px; }
@@ -235,21 +235,24 @@
             .grid-2 { grid-template-columns: 1fr; gap: 10px; }
         }
 
-        /* 🔴 MOTOR DE IMPRESSÃO BLINDADO - MODIFICADO PARA IMPRESSÃO EM LOTE 🔴 */
+        /* 🔴 MOTOR DE IMPRESSÃO BLINDADO REVISADO 🔴 */
         @media print {
             body * { visibility: hidden; }
             html, body { display: block !important; background: white !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             
-            /* LÓGICA DE IMPRESSÃO INDIVIDUAL (EDITOR) */
+            /* Oculta as telas principais para não quebrar o layout da folha */
+            .screen { display: none !important; }
+            
+            /* IMPRESSÃO INDIVIDUAL (EDITOR) */
             body:not(.batch-printing) #editor-screen { display: flex !important; }
             body:not(.batch-printing) #preview-area, body:not(.batch-printing) #preview-area * { visibility: visible; }
             body:not(.batch-printing) #preview-area { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; padding: 0 !important; background: transparent !important; overflow: visible !important; }
             
-            /* LÓGICA DE IMPRESSÃO EM LOTE */
+            /* IMPRESSÃO EM LOTE */
             body.batch-printing #batch-print-container, body.batch-printing #batch-print-container * { visibility: visible; }
             body.batch-printing #batch-print-container { position: absolute !important; left: 0 !important; top: 0 !important; margin: 0 !important; padding: 0 !important; background: transparent !important; display: block !important; width: 100% !important; }
 
-            /* FORÇA QUEBRA DE PÁGINA PARA CADA CARTAZ (GARANTE QUE CADA A4, A5 OU A6 FIQUE EM UMA FOLHA SEPARADA DA IMPRESSORA) */
+            /* FORÇA CADA CARTAZ A FICAR EM UMA PÁGINA INDIVIDUAL DA IMPRESSORA */
             .page { position: relative !important; margin: 0 auto !important; box-shadow: none !important; border: none !important; background-image: none !important; background-color: white !important; page-break-after: always !important; break-after: page !important; }
             .page:last-child { page-break-after: auto !important; break-after: auto !important; }
             
@@ -581,10 +584,10 @@
             <div class="garantia-item" style="--b: 2.5; --l: 18;" id="g3-vis"></div>
         </div>
     </div>
-
-    <!-- CONTAINER SECRETO PARA GERAR IMPRESSÃO EM LOTE -->
-    <div id="batch-print-container"></div>
 </div>
+
+<!-- CONTAINER SECRETO PARA GERAR IMPRESSÃO EM LOTE (AGORA FORA DAS TELAS!) -->
+<div id="batch-print-container"></div>
 
 <!-- LÓGICA PRINCIPAL COM FIREBASE E REGISTRO DO SERVICE WORKER (PWA) -->
 <script type="module">
@@ -673,9 +676,15 @@
             styleEl.id = 'dynamic-print-style';
             document.head.appendChild(styleEl);
         }
-        // Injeta CSS @page para forçar a impressora do navegador a adotar o papel correto
-        styleEl.innerHTML = `@page { size: ${tamanho} portrait; margin: 0; }`;
+        styleEl.innerHTML = `@media print { @page { size: ${tamanho} portrait; margin: 0; } }`;
     };
+
+    // LIMPEZA SEGURA APÓS QUALQUER IMPRESSÃO (BLINDA CONTRA BUG DE TELA BRANCA NO LOTE)
+    window.addEventListener("afterprint", () => {
+        document.body.classList.remove('batch-printing');
+        const bc = document.getElementById('batch-print-container');
+        if(bc) bc.innerHTML = '';
+    });
 
     // ==========================================
     // AUTENTICAÇÃO E PERMISSÕES
@@ -819,37 +828,26 @@
             tbody.appendChild(tr);
         });
         window.renderPagination(totalPages);
-        window.updateSelectionCountUI(); // Atualiza a contagem e a bolinha do "Selecionar Todos"
+        window.updateSelectionCountUI(); 
     };
 
-    // Controle do Checkbox "Selecionar Todos da Página"
     window.toggleSelectAll = function() {
         const isChecked = document.getElementById('selectAll').checked;
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const pageData = currentFilteredProducts.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-        
-        pageData.forEach(p => {
-            if (isChecked) selectedProductIds.add(p.id);
-            else selectedProductIds.delete(p.id);
-        });
+        pageData.forEach(p => { if (isChecked) selectedProductIds.add(p.id); else selectedProductIds.delete(p.id); });
         window.renderTable();
     };
 
-    // Controle de Clique em Checkbox Individual
     window.toggleProductSelection = function(id) {
-        if (selectedProductIds.has(id)) selectedProductIds.delete(id);
-        else selectedProductIds.add(id);
+        if (selectedProductIds.has(id)) selectedProductIds.delete(id); else selectedProductIds.add(id);
         window.updateSelectionCountUI();
     };
 
-    // Atualiza botão de Imprimir Lote e status do Select All
     window.updateSelectionCountUI = function() {
         const count = selectedProductIds.size;
         const btn = document.getElementById('btn-batch-print');
-        
-        if (count > 0) { btn.style.display = 'inline-block'; document.getElementById('batch-count').innerText = count; } 
-        else { btn.style.display = 'none'; }
-        
+        if (count > 0) { btn.style.display = 'inline-block'; document.getElementById('batch-count').innerText = count; } else { btn.style.display = 'none'; }
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const pageData = currentFilteredProducts.slice(startIdx, startIdx + ITEMS_PER_PAGE);
         const allOnPageSelected = pageData.length > 0 && pageData.every(p => selectedProductIds.has(p.id));
@@ -858,7 +856,7 @@
     };
 
     // ==========================================
-    // EXECUÇÃO DA IMPRESSÃO EM LOTE
+    // EXECUÇÃO DA IMPRESSÃO EM LOTE (CORRIGIDA)
     // ==========================================
     window.openBatchPrintModal = function() {
         if (selectedProductIds.size === 0) return;
@@ -875,10 +873,10 @@
         // 1. Configura tamanho de papel pro Navegador
         window.setPrintPageSize(tam);
         
-        // 2. Prepara container invisível de lote
+        // 2. Prepara container invisível de lote (AGORA FORA DAS TELAS!)
         const batchContainer = document.getElementById('batch-print-container');
         batchContainer.innerHTML = '';
-        document.body.classList.add('batch-printing'); // Ativa CSS para Lote
+        document.body.classList.add('batch-printing'); 
 
         // Vamos preservar o estado atual do form caso o usuário estivesse mexendo em algo
         const backupForm = window.getFormData();
@@ -899,28 +897,33 @@
 
                 window.autoCalcular();
                 window.update();
-                window.applyAdjustments(); // Usará os ajustes finos salvos daquele produto
+                window.applyAdjustments(); 
 
                 // Clona e guarda
                 const clone = originalCartaz.cloneNode(true);
-                clone.removeAttribute('id'); // Tira o ID pra não bugar DOM
+                clone.removeAttribute('id'); 
                 batchContainer.appendChild(clone);
             }
         });
 
-        // Restaura formulário
+        // RE-APLICA OS DADOS NO FORMULÁRIO DO EDITOR PRO CASO DELE TER DEIXADO ALGO PELA METADE
         window.populateForm(backupForm);
         window.update();
+        
+        // DEVOLVE A CLASSE ORIGINAL PARA O PREVIEW NÃO FICAR PRESO NO TAMANHO DO LOTE
+        const originalTam = backupForm.tamanho || 'A4';
+        const originalTipo = backupForm.tipo || 'padrao';
+        originalCartaz.className = 'page size-' + originalTam;
+        if (originalTipo === 'padrao') originalCartaz.classList.add('padrao');
+        else if (originalTipo === 'promocional') originalCartaz.classList.add('promocional');
+        else if (originalTipo === 'avista_padrao') originalCartaz.classList.add('avista', 'padrao');
+        else if (originalTipo === 'avista_promocional') originalCartaz.classList.add('avista', 'promocional');
+
         window.closeBatchPrintModal();
 
         // 4. Manda imprimir
         setTimeout(() => { 
             window.print(); 
-            // 5. Limpa a bagunça após fechar a janela de impressão
-            setTimeout(() => {
-                document.body.classList.remove('batch-printing');
-                batchContainer.innerHTML = '';
-            }, 1000);
         }, 500);
     };
 
@@ -1018,7 +1021,7 @@
     // IMPRESSÃO INDIVIDUAL (DENTRO DO EDITOR)
     window.testPrint = function() { 
         const tam = window.getTextVal('in-tamanho-cartaz');
-        window.setPrintPageSize(tam); // Aplica o tamanho na impressora
+        window.setPrintPageSize(tam); 
         document.body.classList.remove('batch-printing');
         window.print(); 
     };
