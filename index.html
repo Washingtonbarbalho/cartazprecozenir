@@ -679,13 +679,6 @@
         styleEl.innerHTML = `@media print { @page { size: ${tamanho} portrait; margin: 0; } }`;
     };
 
-    // LIMPEZA SEGURA APÓS QUALQUER IMPRESSÃO (BLINDA CONTRA BUG DE TELA BRANCA NO LOTE)
-    window.addEventListener("afterprint", () => {
-        document.body.classList.remove('batch-printing');
-        const bc = document.getElementById('batch-print-container');
-        if(bc) bc.innerHTML = '';
-    });
-
     // ==========================================
     // AUTENTICAÇÃO E PERMISSÕES
     // ==========================================
@@ -856,7 +849,7 @@
     };
 
     // ==========================================
-    // EXECUÇÃO DA IMPRESSÃO EM LOTE (CORRIGIDA)
+    // EXECUÇÃO DA IMPRESSÃO EM LOTE (TOTALMENTE CORRIGIDA)
     // ==========================================
     window.openBatchPrintModal = function() {
         if (selectedProductIds.size === 0) return;
@@ -873,22 +866,23 @@
         // 1. Configura tamanho de papel pro Navegador
         window.setPrintPageSize(tam);
         
-        // 2. Prepara container invisível de lote (AGORA FORA DAS TELAS!)
+        // 2. Prepara container de lote (Agora blindado e sem apagar prematuramente)
         const batchContainer = document.getElementById('batch-print-container');
         batchContainer.innerHTML = '';
         document.body.classList.add('batch-printing'); 
 
-        // Vamos preservar o estado atual do form caso o usuário estivesse mexendo em algo
+        // Salvar estado atual do editor
         const backupForm = window.getFormData();
+        const originalCartaz = document.getElementById('cartaz');
 
         // 3. Processa e clona cada cartaz selecionado
-        const originalCartaz = document.getElementById('cartaz');
         selectedProductIds.forEach(id => {
             const prod = allProducts.find(p => p.id === id);
             if (prod) {
+                // Preenche o molde
                 window.populateForm(prod);
                 
-                // Aplica as classes dinamicamente no original
+                // Aplica estilos
                 originalCartaz.className = 'page size-' + tam;
                 if (tipo === 'padrao') originalCartaz.classList.add('padrao');
                 else if (tipo === 'promocional') originalCartaz.classList.add('promocional');
@@ -899,18 +893,21 @@
                 window.update();
                 window.applyAdjustments(); 
 
-                // Clona e guarda
+                // Clona para o lote
                 const clone = originalCartaz.cloneNode(true);
+                
+                // 🔴 SEGURANÇA MÁXIMA: Remove os IDs do clone e de todos os filhos para não bugar o DOM!
                 clone.removeAttribute('id'); 
+                const childElementsWithIds = clone.querySelectorAll('[id]');
+                childElementsWithIds.forEach(el => el.removeAttribute('id'));
+
                 batchContainer.appendChild(clone);
             }
         });
 
-        // RE-APLICA OS DADOS NO FORMULÁRIO DO EDITOR PRO CASO DELE TER DEIXADO ALGO PELA METADE
+        // 4. Devolve o editor pro estado original (Para não ficar bagunçado pra próxima edição)
         window.populateForm(backupForm);
         window.update();
-        
-        // DEVOLVE A CLASSE ORIGINAL PARA O PREVIEW NÃO FICAR PRESO NO TAMANHO DO LOTE
         const originalTam = backupForm.tamanho || 'A4';
         const originalTipo = backupForm.tipo || 'padrao';
         originalCartaz.className = 'page size-' + originalTam;
@@ -921,10 +918,10 @@
 
         window.closeBatchPrintModal();
 
-        // 4. Manda imprimir
+        // 5. Manda imprimir com delay seguro pro Android renderizar tudo
         setTimeout(() => { 
             window.print(); 
-        }, 500);
+        }, 800);
     };
 
     // ==========================================
@@ -1012,18 +1009,24 @@
         if (tipo === 'padrao') cartaz.classList.add('padrao'); else if (tipo === 'promocional') cartaz.classList.add('promocional'); else if (tipo === 'avista_padrao') cartaz.classList.add('avista', 'padrao'); else if (tipo === 'avista_promocional') cartaz.classList.add('avista', 'promocional');
         window.autoCalcular(); window.update(); window.applyAdjustments(); window.closeQuickPrint(); 
         
-        // Aplica o tamanho na impressora do navegador antes de imprimir
+        // Garante que a impressão individual não seja tratada como lote e reseta tudo
+        document.body.classList.remove('batch-printing');
+        const batchContainer = document.getElementById('batch-print-container');
+        if (batchContainer) batchContainer.innerHTML = '';
         window.setPrintPageSize(tam);
-        document.body.classList.remove('batch-printing'); // Garante que não ta em modo lote
+
         setTimeout(() => { window.print(); }, 100); 
     };
 
     // IMPRESSÃO INDIVIDUAL (DENTRO DO EDITOR)
     window.testPrint = function() { 
         const tam = window.getTextVal('in-tamanho-cartaz');
-        window.setPrintPageSize(tam); 
         document.body.classList.remove('batch-printing');
-        window.print(); 
+        const batchContainer = document.getElementById('batch-print-container');
+        if (batchContainer) batchContainer.innerHTML = '';
+        window.setPrintPageSize(tam); 
+
+        setTimeout(() => { window.print(); }, 100); 
     };
 
     window.autoCalcular = function() {
